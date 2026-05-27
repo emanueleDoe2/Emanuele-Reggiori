@@ -1,12 +1,14 @@
 package model;
 
+import java.time.LocalDate;
+
 public class Utente {
 
     private String nome;
     private String cognome;
     private String username;
     private String password;
-    private String dataNascita;
+    private LocalDate dataNascita;
     private String domicilio;
     private Ruolo ruolo;
 
@@ -14,7 +16,7 @@ public class Utente {
                    String cognome,
                    String username,
                    String password,
-                   String dataNascita,
+                   LocalDate dataNascita,
                    String domicilio,
                    Ruolo ruolo) {
 
@@ -43,7 +45,7 @@ public class Utente {
         return password;
     }
 
-    public String getDataNascita() {
+    public LocalDate getDataNascita() {
         return dataNascita;
     }
 

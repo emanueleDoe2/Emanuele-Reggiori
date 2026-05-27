@@ -5,12 +5,12 @@ public class Prenotazione {
     private String codicePrenotazione;
     private Proiezione proiezione;
     private int numeroPostiPrenotati;
-    private Utente utente;
+    private String utente;
 
     public Prenotazione(String codicePrenotazione,
                          Proiezione proiezione,
                          int numeroPostiPrenotati,
-                         Utente utente) {
+                         String utente) {
 
         this.codicePrenotazione = codicePrenotazione;
         this.proiezione = proiezione;
@@ -31,7 +31,7 @@ public class Prenotazione {
         return numeroPostiPrenotati;
     }
 
-    public Utente getUtente() {
+    public String getUsername() {
         return utente;
     }
 

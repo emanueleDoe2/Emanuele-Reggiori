@@ -1,6 +1,7 @@
 package service;
 
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 import model.Ruolo;
 import model.Utente;
@@ -53,7 +54,7 @@ public class AuthService {
                                    String cognome,
                                    String username,
                                    String password,
-                                   String dataNascita,
+                                   LocalDate dataNascita,
                                    String domicilio) {
 
         if (usernameEsiste(username)) {

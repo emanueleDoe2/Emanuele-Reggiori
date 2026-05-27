@@ -1,15 +1,22 @@
 package ui;
 
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.time.LocalDate;
 
+import util.InputUtil;
+import model.Proiezione;
 import service.AuthService;
+import service.ProiezioneService;
 
 public class MenuGuest {
 
     private AuthService authservice;
+    private ProiezioneService proiezioneservice;
 
-    public MenuGuest(AuthService authservice) {
+    public MenuGuest(AuthService authservice, ProiezioneService proiezioneservice) {
         this.authservice = authservice;
+        this.proiezioneservice = proiezioneservice;
     }
 	
 	Scanner scanner = new Scanner(System.in);
@@ -61,99 +68,123 @@ public class MenuGuest {
 
     public void cercaProiezioni() {
 
-        //TODO
-    }
+        System.out.println("===== CERCA PROIEZIONI =====");
 
-    public void registrazione() {
+        System.out.print("Titolo film: ");
+        String titolo = scanner.nextLine().trim();
 
-        System.out.println("===== REGISTRAZIONE CLIENTE =====");
-
-        String nome = "";
-
-        while (nome.isBlank()) {
-
-            System.out.print("Nome: ");
-            nome = scanner.nextLine().trim();
-
-            if (nome.isBlank()) {
-                System.out.println("Il nome è obbligatorio");
-            }
+        if (titolo.isEmpty()) {
+            titolo = null;
         }
 
-        String cognome = "";
+        System.out.print("Genere: ");
+        String genere = scanner.nextLine().trim();
 
-        while (cognome.isBlank()) {
-
-            System.out.print("Cognome: ");
-            cognome = scanner.nextLine().trim();
-
-            if (cognome.isBlank()) {
-                System.out.println("Il cognome è obbligatorio");
-            }
+        if (genere.isEmpty()) {
+            genere = null;
         }
 
-        String username = "";
-
-        while (username.isBlank()) {
-
-            System.out.print("Username: ");
-            username = scanner.nextLine().trim();
-
-            if (username.isBlank()) {
-                System.out.println("Lo username è obbligatorio");
-            }
-        }
-
-        String password = "";
-
-        while (password.isBlank()) {
-
-            System.out.print("Password: ");
-            password = scanner.nextLine().trim();
-
-            if (password.isBlank()) {
-                System.out.println("La password è obbligatoria");
-            }
-        }
-
-        System.out.println("Data di nascita facoltativa");
-        System.out.print("Formato YYYY-MM-DD: ");
-
-        String dataNascita = scanner.nextLine().trim();
-
-        if (dataNascita.isEmpty()) {
-            dataNascita = null;
-        }
-
-        String domicilio = "";
-
-        while (domicilio.isBlank()) {
-
-            System.out.print("Domicilio: ");
-            domicilio = scanner.nextLine().trim();
-
-            if (domicilio.isBlank()) {
-                System.out.println("Il domicilio è obbligatorio");
-            }
-        }
-
-        boolean registrato = authservice.registraCliente(
-                nome,
-                cognome,
-                username,
-                password,
-                dataNascita,
-                domicilio
+        LocalDate dataDa = InputUtil.leggiDataFacoltativa(
+                scanner,
+                "Data da (YYYY-MM-DD): "
         );
 
-        if (registrato) {
+        LocalDate dataA = InputUtil.leggiDataFacoltativa(
+                scanner,
+                "Data da (YYYY-MM-DD): "
+        );
 
-            System.out.println("Registrazione completata");
+         Double costoMin = InputUtil.leggiDoubleFacoltativo(
+                        scanner,
+                        "Costo minimo: "
+                );
+
+        Double costoMax = InputUtil.leggiDoubleFacoltativo(
+                scanner,
+                "Costo minimo: "
+        );
+
+        ArrayList<Proiezione> risultati =
+                proiezioneservice.cercaProiezioni(
+                        titolo,
+                        genere,
+                        dataDa,
+                        dataA,
+                        costoMin,
+                        costoMax
+                );
+
+        if (risultati.isEmpty()) {
+
+            System.out.println("Nessuna proiezione trovata");
 
         } else {
 
-            System.out.println("Registrazione fallita - username già esistente");
+            System.out.println("===== RISULTATI RICERCA =====");
 
+            for (int i = 0; i < risultati.size(); i++) {
+
+                Proiezione proiezione = risultati.get(i);
+
+                System.out.println(
+                        (i + 1) + ". "
+                        + proiezione.getFilm().getTitolo()
+                        + " - "
+                        + proiezione.getDataOra()
+                        + " - "
+                        + proiezione.getCostoBiglietto()
+                        + "€"
+                );
+            }
+
+                while (true) {
+
+                System.out.print("Seleziona una proiezione da visualizzare, oppure 0 per tornare indietro: ");
+
+                int scelta = scanner.nextInt();
+                scanner.nextLine();
+
+                if (scelta == 0) {
+                    return;
+                }
+
+                if (scelta >= 1 && scelta <= risultati.size()) {
+
+                    Proiezione proiezioneSelezionata = risultati.get(scelta - 1);
+
+                    visualizzaProiezione(proiezioneSelezionata);
+
+                    break;
+
+                } else {
+
+                    System.out.println("Scelta non valida");
+                }
+            }
         }
+    }
+
+    public void registrazione() {
+        	
+        MenuRegistrazione menuRegistrazione =
+        		new MenuRegistrazione(scanner, authservice);
+        	
+        menuRegistrazione.start();
+                
+        }
+
+    
+    private void visualizzaProiezione(Proiezione proiezione) {
+
+        System.out.println("===== DETTAGLIO PROIEZIONE =====");
+
+        System.out.println("Titolo: " + proiezione.getFilm().getTitolo());
+        System.out.println("Genere: " + proiezione.getFilm().getGenere());
+        System.out.println("Regista: " + proiezione.getFilm().getRegista());
+        System.out.println("Anno: " + proiezione.getFilm().getAnno());
+        System.out.println("Durata: " + proiezione.getFilm().getDurata() + " minuti");
+        System.out.println("Data e ora: " + proiezione.getDataOra());
+        System.out.println("Costo biglietto: " + proiezione.getCostoBiglietto() + "€");
+        System.out.println("Posti disponibili: " + proiezioneservice.getPostiDisponibili(proiezione));
     }
 }

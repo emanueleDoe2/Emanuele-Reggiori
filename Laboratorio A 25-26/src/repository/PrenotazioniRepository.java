@@ -64,21 +64,13 @@ public class PrenotazioniRepository {
 
                     Proiezione proiezione = new Proiezione(film, dataOra, 0);
 
-                    Utente utente = new Utente(
-                            "",
-                            "",
-                            username,
-                            "",
-                            "",
-                            "",
-                            Ruolo.CLIENTE
-                    );
+                   
 
                     Prenotazione prenotazione = new Prenotazione(
                             codicePrenotazione,
                             proiezione,
                             numeroPosti,
-                            utente
+                            username
                     );
 
                     prenotazioni.add(prenotazione);
@@ -106,7 +98,7 @@ public class PrenotazioniRepository {
 
             writer.write(
                     prenotazione.getCodicePrenotazione() + "," +
-                    prenotazione.getUtente().getUsername() + "," +
+                    prenotazione.getUsername() + "," +
                     prenotazione.getProiezione().getFilm().getTitolo() + "," +
                     prenotazione.getProiezione().getDataOra() + "," +
                     prenotazione.getNumeroPostiPrenotati() + "\n"

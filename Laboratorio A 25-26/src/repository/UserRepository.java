@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 import model.Ruolo;
 import model.Utente;
@@ -31,7 +32,15 @@ public class UserRepository {
                 String cognome = campi[1];
                 String username = campi[2];
                 String password = campi[3];
-                String dataNascita = campi[4];
+                //parsing data di nascita
+                LocalDate dataNascita = null;
+
+                String data = campi[4].trim();
+
+                if (!data.isEmpty() && !data.equalsIgnoreCase("null")) {
+
+                    dataNascita = LocalDate.parse(data);
+                }
                 String domicilio = campi[5];
                 Ruolo ruolo = Ruolo.valueOf(campi[6]);
 
