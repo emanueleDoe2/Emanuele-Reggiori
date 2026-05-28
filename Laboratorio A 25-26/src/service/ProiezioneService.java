@@ -19,72 +19,7 @@ public class ProiezioneService {
 	    this.prenotazioni = prenotazioni;
 	}
 
-    public ArrayList<Proiezione> cercaProiezioni(String titolo,
-                                                 String genere,
-                                                 LocalDate dataDa,
-                                                 LocalDate dataA,
-                                                 Double costoMin,
-                                                 Double costoMax) {
-
-        ArrayList<Proiezione> risultati = new ArrayList<>();
-
-        for (Proiezione proiezione : proiezioni) {
-
-            boolean valida = true;
-
-            if (titolo != null && !titolo.isBlank()) {
-                String titoloFilm = proiezione.getFilm().getTitolo().toLowerCase();
-                String titoloRicerca = titolo.toLowerCase();
-
-                if (!titoloFilm.contains(titoloRicerca)) {
-                    valida = false;
-                }
-            }
-
-            if (genere != null && !genere.isBlank()) {
-                String genereFilm = proiezione.getFilm().getGenere().toLowerCase();
-                String genereRicerca = genere.toLowerCase();
-
-                if (!genereFilm.equals(genereRicerca)) {
-                    valida = false;
-                }
-            }
-
-            if (dataDa != null) {
-                LocalDate dataProiezione = proiezione.getDataOra().toLocalDate();
-
-                if (dataProiezione.isBefore(dataDa)) {
-                    valida = false;
-                }
-            }
-
-            if (dataA != null) {
-                LocalDate dataProiezione = proiezione.getDataOra().toLocalDate();
-
-                if (dataProiezione.isAfter(dataA)) {
-                    valida = false;
-                }
-            }
-
-            if (costoMin != null) {
-                if (proiezione.getCostoBiglietto() < costoMin) {
-                    valida = false;
-                }
-            }
-
-            if (costoMax != null) {
-                if (proiezione.getCostoBiglietto() > costoMax) {
-                    valida = false;
-                }
-            }
-
-            if (valida) {
-                risultati.add(proiezione);
-            }
-        }
-
-        return risultati;
-    }
+    
     
     public void visualizzaProiezione(Proiezione proiezione) {
 
@@ -123,4 +58,75 @@ public class ProiezioneService {
 
         return CAPIENZA_SALA - postiPrenotati;
     }
+    
+    public ArrayList<Proiezione> cercaProiezioni(String titolo, String genere, LocalDate dataDa, LocalDate dataA,
+			Double costoMin, Double costoMax) {
+
+		ArrayList<Proiezione> risultati = new ArrayList<>();
+
+		for (Proiezione proiezione : proiezioni) {
+
+			boolean valida = true;
+
+			if (titolo != null && !titolo.isBlank()) {
+
+				String titoloFilm = proiezione.getFilm().getTitolo().toLowerCase();
+
+				String titoloRicerca = titolo.toLowerCase();
+
+				if (!titoloFilm.contains(titoloRicerca)) {
+					valida = false;
+				}
+			}
+
+			if (genere != null && !genere.isBlank()) {
+
+				String genereFilm = proiezione.getFilm().getGenere().toLowerCase();
+
+				String genereRicerca = genere.toLowerCase();
+
+				if (!genereFilm.equals(genereRicerca)) {
+					valida = false;
+				}
+			}
+
+			if (dataDa != null) {
+
+				LocalDate dataProiezione = proiezione.getDataOra().toLocalDate();
+
+				if (dataProiezione.isBefore(dataDa)) {
+					valida = false;
+				}
+			}
+
+			if (dataA != null) {
+
+				LocalDate dataProiezione = proiezione.getDataOra().toLocalDate();
+
+				if (dataProiezione.isAfter(dataA)) {
+					valida = false;
+				}
+			}
+
+			if (costoMin != null) {
+
+				if (proiezione.getCostoBiglietto() < costoMin) {
+					valida = false;
+				}
+			}
+
+			if (costoMax != null) {
+
+				if (proiezione.getCostoBiglietto() > costoMax) {
+					valida = false;
+				}
+			}
+
+			if (valida) {
+				risultati.add(proiezione);
+			}
+		}
+
+		return risultati;
+	}
 }

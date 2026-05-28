@@ -6,12 +6,13 @@ import java.time.LocalDate;
 import service.AuthService;
 import util.InputUtil;
 
-public class MenuRegistrazione {
+
+public class UIRegistrazione {
 
     private Scanner scanner;
     private AuthService authservice;
 
-    public MenuRegistrazione(Scanner scanner,
+    public UIRegistrazione(Scanner scanner,
                              AuthService authservice) {
 
         this.scanner = scanner;
@@ -43,7 +44,7 @@ public class MenuRegistrazione {
                         "Lo username è obbligatorio"
                 );
 
-        String password =
+        String password = 
                 InputUtil.leggiStringaObbligatoria(
                         scanner,
                         "Password: ",

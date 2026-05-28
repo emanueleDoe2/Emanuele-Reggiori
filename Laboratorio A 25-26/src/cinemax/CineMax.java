@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import service.AuthService;
 import service.ProiezioneService;
+import service.PrenotazioneService;
 import model.Prenotazione;
 import model.Proiezione;
 import model.Utente;
@@ -27,8 +28,9 @@ public class CineMax {
         
         AuthService authService = new AuthService(utenti, utenteRepository);
         ProiezioneService proiezioneService = new ProiezioneService(proiezioni, prenotazioni);
+        PrenotazioneService prenotazioneService = new PrenotazioneService(prenotazioni, prenotazioneRepository, proiezioneService);
 
-        MenuPrincipale menu = new MenuPrincipale(utenti, proiezioni, prenotazioni, authService, proiezioneService);
+        MenuPrincipale menu = new MenuPrincipale(utenti, proiezioni, prenotazioni, authService, proiezioneService, prenotazioneService);
         menu.start();
 
     }

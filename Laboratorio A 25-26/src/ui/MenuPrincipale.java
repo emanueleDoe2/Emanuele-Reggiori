@@ -5,10 +5,12 @@ import java.util.ArrayList;
 
 import service.AuthService;
 import service.ProiezioneService;
+import service.PrenotazioneService;
 
 import model.Utente;
 import model.Prenotazione;
 import model.Proiezione;
+import model.Ruolo;
 
 public class MenuPrincipale {
 
@@ -17,6 +19,7 @@ public class MenuPrincipale {
     private ArrayList<Prenotazione> prenotazioni;
     private AuthService authservice;
     private ProiezioneService proiezioneservice;
+    private PrenotazioneService prenotazioneservice;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -24,13 +27,15 @@ public class MenuPrincipale {
                           ArrayList<Proiezione> proiezioni,
                           ArrayList<Prenotazione> prenotazioni,
                           AuthService authservice,
-                          ProiezioneService proiezioneservice) {
+                          ProiezioneService proiezioneservice,
+                          PrenotazioneService prenotazioneservice) {
 
         this.utenti = utenti;
         this.proiezioni = proiezioni;
         this.prenotazioni = prenotazioni;
         this.authservice = authservice;
         this.proiezioneservice = proiezioneservice;
+        this.prenotazioneservice = prenotazioneservice;
     }
 
     public void start() {
@@ -83,17 +88,63 @@ public class MenuPrincipale {
         Utente utente = authservice.login(username, password);
 
         if (utente == null) {
+
             System.out.println("Username o password errati");
+
         } else {
+
             System.out.println("Login effettuato");
             System.out.println("Benvenuto " + utente.getNome());
+            
+            Ruolo ruolo = utente.getRuolo();
+
+            if (ruolo == Ruolo.CLIENTE) {
+
+                MenuCliente menuCliente =
+                        new MenuCliente(
+                                scanner,
+                                utente,
+                                proiezioneservice,
+                                prenotazioneservice
+                        );
+
+                menuCliente.start();
+
+            } else if (ruolo == Ruolo.PROIEZIONISTA) {
+
+                MenuProiezionista menuProiezionista =
+                        new MenuProiezionista(
+                                scanner,
+                                utente,
+                                authservice,
+                                proiezioneservice
+                        );
+
+                menuProiezionista.start();
+
+            } else if (ruolo == Ruolo.BIGLIETTAIO) {
+
+                MenuBigliettaio menuBigliettaio =
+                        new MenuBigliettaio(
+                                scanner,
+                                utente,
+                                authservice,
+                                proiezioneservice
+                        );
+
+                menuBigliettaio.start();
+                
+            } else {
+
+                System.out.println("Ruolo utente non valido");
+            }
         }
     }
 
     public void registrazione() {
     	
-    	MenuRegistrazione menuRegistrazione =
-    			new MenuRegistrazione(scanner, authservice);
+    	UIRegistrazione menuRegistrazione =
+    			new UIRegistrazione(scanner, authservice);
     	
     	menuRegistrazione.start();
         

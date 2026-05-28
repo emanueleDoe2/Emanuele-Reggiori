@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import model.Ruolo;
 import model.Utente;
 import repository.UserRepository;
+import util.PasswordUtil;
 
 public class AuthService {
 
@@ -24,7 +25,7 @@ public class AuthService {
         for (Utente utente : utenti) {
 
             if (utente.getUsername().equals(username) &&
-                utente.getPassword().equals(password)) {
+                utente.getPassword().equals(PasswordUtil.hashPassword(password))) {
 
                 return utente;
 
@@ -62,12 +63,14 @@ public class AuthService {
             return false;
 
         }
+        
+        String PasswordCifrata = PasswordUtil.hashPassword(password);
 
         Utente nuovoUtente = new Utente(
                 nome,
                 cognome,
                 username,
-                password,
+                PasswordCifrata,
                 dataNascita,
                 domicilio,
                 Ruolo.CLIENTE

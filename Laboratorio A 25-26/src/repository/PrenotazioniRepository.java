@@ -10,108 +10,115 @@ import java.util.Scanner;
 import model.Film;
 import model.Prenotazione;
 import model.Proiezione;
-import model.Ruolo;
-import model.Utente;
+
 
 public class PrenotazioniRepository {
 
-    private String percorsoFile = "data/prenotazioni.csv";
+	private String percorsoFile = "data/prenotazioni.csv";
 
-    public PrenotazioniRepository() {
+	public PrenotazioniRepository() {
 
-        try {
+		try {
 
-            File file = new File(percorsoFile);
+			File file = new File(percorsoFile);
 
-            if (!file.exists()) {
+			if (!file.exists()) {
 
-                file.createNewFile();
+				file.createNewFile();
 
-            }
+			}
 
-        } catch (IOException e) {
+		} catch (IOException e) {
 
-            System.out.println("Errore nella creazione del file prenotazioni.");
+			System.out.println("Errore nella creazione del file prenotazioni.");
 
-        }
+		}
 
-    }
+	}
 
-    public ArrayList<Prenotazione> caricaPrenotazioni() {
+	public ArrayList<Prenotazione> caricaPrenotazioni() {
 
-        ArrayList<Prenotazione> prenotazioni = new ArrayList<Prenotazione>();
+		ArrayList<Prenotazione> prenotazioni = new ArrayList<Prenotazione>();
 
-        try {
+		try {
 
-            File file = new File(percorsoFile);
-            Scanner scanner = new Scanner(file);
+			File file = new File(percorsoFile);
+			Scanner scanner = new Scanner(file);
 
-            while (scanner.hasNextLine()) {
+			while (scanner.hasNextLine()) {
 
-                String riga = scanner.nextLine();
+				String riga = scanner.nextLine();
 
-                if (!riga.isEmpty()) {
+				if (!riga.isEmpty()) {
 
-                    String[] campi = riga.split(",");
+					String[] campi = riga.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"); // regex per togliere le ,
+																					// all'interno di " "
 
-                    String codicePrenotazione = campi[0];
-                    String username = campi[1];
-                    String titoloFilm = campi[2];
-                    LocalDateTime dataOra = LocalDateTime.parse(campi[3]);
-                    int numeroPosti = Integer.parseInt(campi[4]);
+					String codicePrenotazione = campi[0];
+					String username = campi[1];
+					String titoloFilm = campi[2].replace("\"", "");
+					String dataString = campi[3].replace("\"", "");
+					dataString = dataString.replace(" ", "T");
+					LocalDateTime dataOra = LocalDateTime.parse(dataString);
+					int numeroPosti = Integer.parseInt(campi[4]);
 
-                    Film film = new Film(titoloFilm, "", "", 0, 0, 0);
+					Film film = new Film(titoloFilm, "", "", 0, 0, 0);
 
-                    Proiezione proiezione = new Proiezione(film, dataOra, 0);
+					Proiezione proiezione = new Proiezione(film, dataOra, 0);
 
-                   
+					Prenotazione prenotazione = new Prenotazione(codicePrenotazione, proiezione, numeroPosti, username);
 
-                    Prenotazione prenotazione = new Prenotazione(
-                            codicePrenotazione,
-                            proiezione,
-                            numeroPosti,
-                            username
-                    );
+					prenotazioni.add(prenotazione);
 
-                    prenotazioni.add(prenotazione);
+				}
 
-                }
+			}
 
-            }
+			scanner.close();
 
-            scanner.close();
+		} catch (IOException e) {
 
-        } catch (IOException e) {
+			System.out.println("Errore durante il caricamento delle prenotazioni.");
 
-            System.out.println("Errore durante il caricamento delle prenotazioni.");
+		}
 
-        }
+		return prenotazioni;
+	}
 
-        return prenotazioni;
-    }
+	
+	public void salvaPrenotazione(Prenotazione prenotazione) {
+		try {
+			FileWriter writer = new FileWriter(percorsoFile, true);
+			writer.write(prenotazione.getCodicePrenotazione() + "," + prenotazione.getUsername() + ",\""
+					+ prenotazione.getProiezione().getFilm().getTitolo() + "\","
+					+ prenotazione.getProiezione().getDataOra() + "," + prenotazione.getNumeroPostiPrenotati() + "\n");
+			writer.close();
+		} catch (IOException e) {
+			System.out.println("Errore durante il salvataggio della prenotazione.");
+		}
+	}
 
-    public void salvaPrenotazione(Prenotazione prenotazione) {
+	
+	public void salvaPrenotazioni(ArrayList<Prenotazione> prenotazioni) {
 
-        try {
+		try {
 
-            FileWriter writer = new FileWriter(percorsoFile, true);
+			FileWriter writer = new FileWriter(percorsoFile, false);
 
-            writer.write(
-                    prenotazione.getCodicePrenotazione() + "," +
-                    prenotazione.getUsername() + "," +
-                    prenotazione.getProiezione().getFilm().getTitolo() + "," +
-                    prenotazione.getProiezione().getDataOra() + "," +
-                    prenotazione.getNumeroPostiPrenotati() + "\n"
-            );
+			for (Prenotazione prenotazione : prenotazioni) {
 
-            writer.close();
+				writer.write(prenotazione.getCodicePrenotazione() + "," + prenotazione.getUsername() + ",\""
+						+ prenotazione.getProiezione().getFilm().getTitolo() + "\","
+						+ prenotazione.getProiezione().getDataOra() + "," + prenotazione.getNumeroPostiPrenotati()
+						+ System.lineSeparator());
+			}
 
-        } catch (IOException e) {
+			writer.close();
 
-            System.out.println("Errore durante il salvataggio della prenotazione.");
+		} catch (IOException e) {
 
-        }
-
-    }
+			System.out.println("Errore durante il salvataggio delle prenotazioni.");
+		}
+	}
 
 }
