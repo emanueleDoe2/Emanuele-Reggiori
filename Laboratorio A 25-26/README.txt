@@ -28,6 +28,11 @@ STRUTTURA DEL PROGETTO
   utenti.csv
   prenotazioni.csv
 
+  Mentre gli utenti di tipo cliente possono essere creati da programma, gli utenti di tipo bigliettaio e proiezionista si suppone possano essere creati solo da admin/server side. 
+  Delle utenze di prova sono le seguenti:
+  Bigliettaio -> username: averdi psw: anna123
+  Proiezionisti -> username: mrossi psw: pippo123
+
 - doc/
   Manuale utente, manuale tecnico e Javadoc.
 
@@ -41,30 +46,13 @@ STRUTTURA DEL PROGETTO
 ESECUZIONE
 
 Aprire il terminale nella cartella radice del progetto ed eseguire:
-
 java -jar bin/cinemax.jar
-
 Esempio di cartella corretta:
-
 Laboratorio A 25-26/
-
 Il programma deve essere avviato dalla cartella radice perché utilizza la directory data/ tramite percorsi relativi.
 
-FUNZIONALITÀ PRINCIPALI
-
-L'applicazione consente di:
-
-- cercare e visualizzare proiezioni;
-- registrare nuovi clienti;
-- gestire prenotazioni dei clienti;
-- gestire il palinsesto delle proiezioni;
-- cercare e visualizzare prenotazioni per i bigliettai.
-
-
 NOTE
-
 Il main dell'applicazione si trova nella classe:
-
 cinemax.CineMax
 
 Il progetto non utilizza librerie esterne.
