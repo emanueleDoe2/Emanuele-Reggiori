@@ -19,144 +19,140 @@ import model.Proiezione;
 import model.Ruolo;
 import util.InputUtil;
 
+/**
+ * Gestisce il menu iniziale dell’applicazione e l’instradamento verso i menu
+ * dei diversi ruoli.
+ */
 public class MenuPrincipale {
 
-    private ArrayList<Utente> utenti;
-    private ArrayList<Proiezione> proiezioni;
-    private ArrayList<Prenotazione> prenotazioni;
-    private AuthService authservice;
-    private ProiezioneService proiezioneservice;
-    private PrenotazioneService prenotazioneservice;
+	private AuthService authservice;
+	private ProiezioneService proiezioneservice;
+	private PrenotazioneService prenotazioneservice;
 
-    Scanner scanner = new Scanner(System.in);
+	Scanner scanner = new Scanner(System.in);
 
-    public MenuPrincipale(ArrayList<Utente> utenti,
-                          ArrayList<Proiezione> proiezioni,
-                          ArrayList<Prenotazione> prenotazioni,
-                          AuthService authservice,
-                          ProiezioneService proiezioneservice,
-                          PrenotazioneService prenotazioneservice) {
+	/**
+	 * Crea una nuova istanza della classe MenuPrincipale.
+	 *
+	 * @param utenti              elenco degli utenti caricati.
+	 * @param proiezioni          elenco delle proiezioni caricate.
+	 * @param prenotazioni        elenco delle prenotazioni caricate.
+	 * @param authservice         servizio di autenticazione.
+	 * @param proiezioneservice   servizio delle proiezioni.
+	 * @param prenotazioneservice servizio delle prenotazioni.
+	 */
+	public MenuPrincipale(ArrayList<Utente> utenti, ArrayList<Proiezione> proiezioni,
+			ArrayList<Prenotazione> prenotazioni, AuthService authservice, ProiezioneService proiezioneservice,
+			PrenotazioneService prenotazioneservice) {
 
-        this.utenti = utenti;
-        this.proiezioni = proiezioni;
-        this.prenotazioni = prenotazioni;
-        this.authservice = authservice;
-        this.proiezioneservice = proiezioneservice;
-        this.prenotazioneservice = prenotazioneservice;
-    }
+		this.authservice = authservice;
+		this.proiezioneservice = proiezioneservice;
+		this.prenotazioneservice = prenotazioneservice;
+	}
 
-    public void start() {
+	/**
+	 * Avvia il menu.
+	 */
+	public void start() {
 
-        int scelta;
+		int scelta;
 
-        do {
-            stampaMenu();
+		do {
+			stampaMenu();
 
-            scelta = InputUtil.leggiInteroObbligatorio(
-                    scanner,
-                    "Scelta: ",
-                    "Scelta non valida. Inserisci un numero."
-            );
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
 
-            if (scelta == 1) {
-                login();
+			if (scelta == 1) {
+				login();
 
-            } else if (scelta == 2) {
-                MenuGuest menuGuest = new MenuGuest(authservice, proiezioneservice);
-                menuGuest.start();
+			} else if (scelta == 2) {
+				MenuGuest menuGuest = new MenuGuest(authservice, proiezioneservice);
+				menuGuest.start();
 
-            } else if (scelta == 3) {
-                registrazione();
+			} else if (scelta == 3) {
+				registrazione();
 
-            } else if (scelta == 0) {
-                System.out.println("Chiusura applicazione");
+			} else if (scelta == 0) {
+				System.out.println("Chiusura applicazione");
 
-            } else {
-                System.out.println("Scelta non valida");
-            }
+			} else {
+				System.out.println("Scelta non valida");
+			}
 
-        } while (scelta != 0);
-    }
+		} while (scelta != 0);
+	}
 
-    public void stampaMenu() {
-        System.out.println("===== CINEMAX =====");
-        System.out.println("1. Login");
-        System.out.println("2. Accesso guest");
-        System.out.println("3. Registrazione");
-        System.out.println("0. Esci");
-    }
+	/**
+	 * Stampa le opzioni del menu principale.
+	 */
+	public void stampaMenu() {
+		System.out.println("===== CINEMAX =====");
+		System.out.println("1. Login");
+		System.out.println("2. Accesso guest");
+		System.out.println("3. Registrazione");
+		System.out.println("0. Esci");
+	}
 
-    public void login() {
+	/**
+	 * Gestisce da terminale l’accesso dell’utente e apre il menu relativo al suo
+	 * ruolo.
+	 */
+	public void login() {
 
-        System.out.print("Username: ");
-        String username = scanner.nextLine();
+		System.out.print("Username: ");
+		String username = scanner.nextLine();
 
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+		System.out.print("Password: ");
+		String password = scanner.nextLine();
 
-        Utente utente = authservice.login(username, password);
+		Utente utente = authservice.login(username, password);
 
-        if (utente == null) {
+		if (utente == null) {
 
-            System.out.println("Username o password errati");
+			System.out.println("Username o password errati");
 
-        } else {
+		} else {
 
-            System.out.println("Login effettuato");
-            System.out.println("Benvenuto " + utente.getNome());
-            
-            Ruolo ruolo = utente.getRuolo();
+			System.out.println("Login effettuato");
+			System.out.println("Benvenuto " + utente.getNome());
 
-            if (ruolo == Ruolo.CLIENTE) {
+			Ruolo ruolo = utente.getRuolo();
 
-                MenuCliente menuCliente =
-                        new MenuCliente(
-                                scanner,
-                                utente,
-                                proiezioneservice,
-                                prenotazioneservice
-                        );
+			if (ruolo == Ruolo.CLIENTE) {
 
-                menuCliente.start();
+				MenuCliente menuCliente = new MenuCliente(scanner, utente, proiezioneservice, prenotazioneservice);
 
-            } else if (ruolo == Ruolo.PROIEZIONISTA) {
+				menuCliente.start();
 
-                MenuProiezionista menuProiezionista =
-                        new MenuProiezionista(
-                                scanner,
-                                utente,
-                                authservice,
-                                proiezioneservice
-                        );
+			} else if (ruolo == Ruolo.PROIEZIONISTA) {
 
-                menuProiezionista.start();
+				MenuProiezionista menuProiezionista = new MenuProiezionista(scanner, utente, authservice,
+						proiezioneservice);
 
-            } else if (ruolo == Ruolo.BIGLIETTAIO) {
+				menuProiezionista.start();
 
-                MenuBigliettaio menuBigliettaio =
-                        new MenuBigliettaio(
-                                scanner,
-                                utente,
-                                prenotazioneservice,
-                                authservice
-                        );
+			} else if (ruolo == Ruolo.BIGLIETTAIO) {
 
-                menuBigliettaio.start();
-                
-            } else {
+				MenuBigliettaio menuBigliettaio = new MenuBigliettaio(scanner, utente, prenotazioneservice,
+						authservice);
 
-                System.out.println("Ruolo utente non valido");
-            }
-        }
-    }
+				menuBigliettaio.start();
 
-    public void registrazione() {
-    	
-    	UIRegistrazione menuRegistrazione =
-    			new UIRegistrazione(scanner, authservice);
-    	
-    	menuRegistrazione.start();
-        
-        
-    }
+			} else {
+
+				System.out.println("Ruolo utente non valido");
+			}
+		}
+	}
+
+	/**
+	 * Avvia la procedura di registrazione cliente.
+	 */
+	public void registrazione() {
+
+		UIRegistrazione menuRegistrazione = new UIRegistrazione(scanner, authservice);
+
+		menuRegistrazione.start();
+
+	}
 }

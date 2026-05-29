@@ -16,6 +16,9 @@ import service.ProiezioneService;
 import service.PrenotazioneService;
 import util.InputUtil;
 
+/**
+ * Gestisce l’interfaccia testuale dedicata al ruolo cliente.
+ */
 public class MenuCliente {
 
 	private Scanner scanner;
@@ -23,6 +26,15 @@ public class MenuCliente {
 	private ProiezioneService proiezioneservice;
 	private PrenotazioneService prenotazioneservice;
 
+	/**
+	 * Crea una nuova istanza della classe MenuCliente.
+	 *
+	 * @param scanner             scanner utilizzato per leggere l’input da
+	 *                            terminale.
+	 * @param utente              utente che apre il menu.
+	 * @param proiezioneservice   servizio delle proiezioni.
+	 * @param prenotazioneservice servizio delle prenotazioni.
+	 */
 	public MenuCliente(Scanner scanner, Utente utente, ProiezioneService proiezioneservice,
 			PrenotazioneService prenotazioneservice) {
 
@@ -33,6 +45,9 @@ public class MenuCliente {
 
 	}
 
+	/**
+	 * Avvia il menu.
+	 */
 	public void start() {
 
 		int scelta;
@@ -63,6 +78,9 @@ public class MenuCliente {
 		} while (scelta != 0);
 	}
 
+	/**
+	 * Gestisce la ricerca di una proiezione e l’eventuale prenotazione.
+	 */
 	private void cercaEPrenotaProiezione() {
 
 		UICercaProiezioni uiCercaProiezioni = new UICercaProiezioni(proiezioneservice, scanner);
@@ -98,6 +116,11 @@ public class MenuCliente {
 		} while (scelta != 0 && scelta != 1);
 	}
 
+	/**
+	 * Richiede il numero di posti e crea una prenotazione.
+	 *
+	 * @param proiezioneSelezionata proiezione selezionata dall’utente.
+	 */
 	private void creaPrenotazione(Proiezione proiezioneSelezionata) {
 
 		int numeroPosti;
@@ -129,6 +152,9 @@ public class MenuCliente {
 		}
 	}
 
+	/**
+	 * Mostra e gestisce le prenotazioni dell’utente autenticato.
+	 */
 	private void gestisciPrenotazioniUtente() {
 
 		ArrayList<Prenotazione> prenotazioniUtente = prenotazioneservice.getPrenotazioniUtente(utente);
@@ -200,14 +226,14 @@ public class MenuCliente {
 							if (modificata) {
 
 								System.out.println("Prenotazione modificata correttamente");
+								return;
 
 							} else {
 
 								System.out.println(
 										"Modifica non consentita: posti insufficienti o proiezione non valida");
+								return;
 							}
-
-							break;
 
 						} else {
 
@@ -241,6 +267,11 @@ public class MenuCliente {
 		} while (scelta != 0 && scelta != 2);
 	}
 
+	/**
+	 * Stampa le prenotazioni dell’utente autenticato.
+	 *
+	 * @param prenotazioniUtente elenco delle prenotazioni dell’utente.
+	 */
 	private void stampaPrenotazioniUtente(ArrayList<Prenotazione> prenotazioniUtente) {
 
 		System.out.println("===== LE TUE PRENOTAZIONI =====");
@@ -256,6 +287,13 @@ public class MenuCliente {
 		}
 	}
 
+	/**
+	 * Permette all’utente di selezionare una prenotazione dall’elenco.
+	 *
+	 * @param prenotazioniUtente elenco delle prenotazioni dell’utente.
+	 *
+	 * @return oggetto richiesto, oppure null se non disponibile.
+	 */
 	private Prenotazione selezionaPrenotazione(ArrayList<Prenotazione> prenotazioniUtente) {
 
 		while (true) {
@@ -278,6 +316,9 @@ public class MenuCliente {
 		}
 	}
 
+	/**
+	 * Stampa le opzioni del menu cliente.
+	 */
 	public void stampaMenuCliente() {
 
 		System.out.println();
@@ -288,6 +329,11 @@ public class MenuCliente {
 
 	}
 
+	/**
+	 * Stampa a video il dettaglio di una prenotazione.
+	 *
+	 * @param prenotazione prenotazione da gestire.
+	 */
 	private void visualizzaPrenotazione(Prenotazione prenotazione) {
 
 		System.out.println("===== DETTAGLIO PRENOTAZIONE =====");

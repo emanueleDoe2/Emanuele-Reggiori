@@ -14,6 +14,10 @@ import repository.ProiezioniRepository;
 import model.Prenotazione;
 import model.Proiezione;
 
+/**
+ * Contiene la logica applicativa relativa alla ricerca, visualizzazione,
+ * aggiunta, modifica ed eliminazione delle proiezioni.
+ */
 public class ProiezioneService {
 
 	private ArrayList<Proiezione> proiezioni;
@@ -22,6 +26,13 @@ public class ProiezioneService {
 
 	private static final int CAPIENZA_SALA = 200;
 
+	/**
+	 * Crea una nuova istanza della classe ProiezioneService.
+	 *
+	 * @param proiezioni           elenco delle proiezioni caricate.
+	 * @param prenotazioni         elenco delle prenotazioni caricate.
+	 * @param proiezioniRepository repository delle proiezioni.
+	 */
 	public ProiezioneService(ArrayList<Proiezione> proiezioni, ArrayList<Prenotazione> prenotazioni,
 			ProiezioniRepository proiezioniRepository) {
 
@@ -30,21 +41,14 @@ public class ProiezioneService {
 		this.proiezioniRepository = proiezioniRepository;
 	}
 
-	public void visualizzaProiezione(Proiezione proiezione) {
-
-		System.out.println("===== DETTAGLIO PROIEZIONE =====");
-
-		System.out.println("Titolo: " + proiezione.getFilm().getTitolo());
-		System.out.println("Genere: " + proiezione.getFilm().getGenere());
-		System.out.println("Regista: " + proiezione.getFilm().getRegista());
-		System.out.println("Anno: " + proiezione.getFilm().getAnno());
-		System.out.println("Durata: " + proiezione.getFilm().getDurata() + " minuti");
-
-		System.out.println("Data e ora: " + proiezione.getDataOra());
-		System.out.println("Costo biglietto: " + proiezione.getCostoBiglietto() + "€");
-		System.out.println("Posti disponibili: " + getPostiDisponibili(proiezione));
-	}
-
+	/**
+	 * Calcola i posti ancora disponibili per una proiezione cercando tutte le
+	 * prenotazioni associate a quella proiezione.
+	 *
+	 * @param proiezione proiezione da gestire.
+	 *
+	 * @return valore calcolato.
+	 */
 	public int getPostiDisponibili(Proiezione proiezione) {
 
 		int postiPrenotati = 0;
@@ -65,6 +69,18 @@ public class ProiezioneService {
 		return CAPIENZA_SALA - postiPrenotati;
 	}
 
+	/**
+	 * Cerca proiezioni applicando i filtri indicati.
+	 *
+	 * @param titolo   titolo del film.
+	 * @param genere   genere del film.
+	 * @param dataDa   data iniziale del filtro.
+	 * @param dataA    data finale del filtro.
+	 * @param costoMin costo minimo del filtro.
+	 * @param costoMax costo massimo del filtro.
+	 *
+	 * @return elenco dei risultati ottenuti.
+	 */
 	public ArrayList<Proiezione> cercaProiezioni(String titolo, String genere, LocalDate dataDa, LocalDate dataA,
 			Double costoMin, Double costoMax) {
 
@@ -140,6 +156,13 @@ public class ProiezioneService {
 		return proiezioni;
 	}
 
+	/**
+	 * Aggiunge una nuova proiezione se non si sovrappone a una già esistente.
+	 *
+	 * @param proiezione proiezione da gestire.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	public boolean aggiungiProiezione(Proiezione proiezione) {
 
 		if (proiezione == null) {
@@ -165,6 +188,13 @@ public class ProiezioneService {
 		return true;
 	}
 
+	/**
+	 * Elimina una proiezione se è passata e non ha prenotazioni.
+	 *
+	 * @param proiezioneDaEliminare proiezione da eliminare.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	public boolean eliminaProiezione(Proiezione proiezioneDaEliminare) {
 
 		if (proiezioneDaEliminare == null) {
@@ -196,26 +226,33 @@ public class ProiezioneService {
 
 		for (int i = 0; i < proiezioni.size(); i++) {
 
-		    Proiezione proiezione = proiezioni.get(i);
+			Proiezione proiezione = proiezioni.get(i);
 
-		    if (proiezione.getFilm().getTitolo()
-		            .equalsIgnoreCase(proiezioneDaEliminare.getFilm().getTitolo())
-		            &&
-		            proiezione.getDataOra().equals(proiezioneDaEliminare.getDataOra())) {
+			if (proiezione.getFilm().getTitolo().equalsIgnoreCase(proiezioneDaEliminare.getFilm().getTitolo())
+					&& proiezione.getDataOra().equals(proiezioneDaEliminare.getDataOra())) {
 
-		        proiezioni.remove(i);
-		        rimossa = true;
-		        break;
-		    }
+				proiezioni.remove(i);
+				rimossa = true;
+				break;
+			}
 		}
 
 		if (rimossa) {
-		    proiezioniRepository.salvaProiezioni(proiezioni);
+			proiezioniRepository.salvaProiezioni(proiezioni);
 		}
 
 		return rimossa;
 	}
 
+	/**
+	 * Modifica la data e l’ora di una proiezione se le date della proiezione da
+	 * modificare e selezionata sono > della data di oggi.
+	 *
+	 * @param proiezioneDaModificare proiezione da modificare.
+	 * @param nuovaDataOra           nuova data e ora della proiezione.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	public boolean modificaDataProiezione(Proiezione proiezioneDaModificare, LocalDateTime nuovaDataOra) {
 
 		if (proiezioneDaModificare == null || nuovaDataOra == null) {

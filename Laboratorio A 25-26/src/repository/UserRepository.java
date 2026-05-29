@@ -17,142 +17,141 @@ import java.time.format.DateTimeParseException;
 import model.Ruolo;
 import model.Utente;
 
+/**
+ * Gestisce il caricamento e il salvataggio degli utenti su file CSV.
+ */
 public class UserRepository {
 
-    private String percorsoFile = "data/utenti.csv";
+	private String percorsoFile = "data/utenti.csv";
 
-    public ArrayList<Utente> caricaUtenti() {
+	/**
+	 * Carica da file tutti gli utenti validi.
+	 *
+	 * @return elenco dei risultati ottenuti.
+	 */
+	public ArrayList<Utente> caricaUtenti() {
 
-        ArrayList<Utente> utenti = new ArrayList<Utente>();
+		ArrayList<Utente> utenti = new ArrayList<Utente>();
 
-        File file = new File(percorsoFile);
+		File file = new File(percorsoFile);
 
-        if (!file.exists()) {
-            System.out.println("File utenti non trovato.");
-            return utenti;
-        }
+		if (!file.exists()) {
+			System.out.println("File utenti non trovato.");
+			return utenti;
+		}
 
-        try {
+		try {
 
-            Scanner scanner = new Scanner(file);
+			Scanner scanner = new Scanner(file);
 
-            while (scanner.hasNextLine()) {
+			while (scanner.hasNextLine()) {
 
-                String riga = scanner.nextLine();
+				String riga = scanner.nextLine();
 
-                if (!riga.isBlank()) {
+				if (!riga.isBlank()) {
 
-                    try {
+					try {
 
-                        String[] campi = riga.split(",");
+						String[] campi = riga.split(",");
 
-                        if (campi.length < 7) {
-                            System.out.println("Riga utente incompleta, ignorata: " + riga);
-                            continue;
-                        }
+						if (campi.length < 7) {
+							System.out.println("Riga utente incompleta, ignorata: " + riga);
+							continue;
+						}
 
-                        String nome = campi[0].trim();
-                        String cognome = campi[1].trim();
-                        String username = campi[2].trim();
-                        String password = campi[3].trim();
+						String nome = campi[0].trim();
+						String cognome = campi[1].trim();
+						String username = campi[2].trim();
+						String password = campi[3].trim();
 
-                        LocalDate dataNascita = null;
+						LocalDate dataNascita = null;
 
-                        String data = campi[4].trim();
+						String data = campi[4].trim();
 
-                        if (!data.isEmpty() && !data.equalsIgnoreCase("null")) {
-                            dataNascita = LocalDate.parse(data);
-                        }
+						if (!data.isEmpty() && !data.equalsIgnoreCase("null")) {
+							dataNascita = LocalDate.parse(data);
+						}
 
-                        String domicilio = campi[5].trim();
+						String domicilio = campi[5].trim();
 
-                        Ruolo ruolo = Ruolo.valueOf(campi[6].trim().toUpperCase());
+						Ruolo ruolo = Ruolo.valueOf(campi[6].trim().toUpperCase());
 
-                        if (nome.isBlank()) {
-                            System.out.println("Nome utente mancante, riga ignorata: " + riga);
-                            continue;
-                        }
+						if (nome.isBlank()) {
+							System.out.println("Nome utente mancante, riga ignorata: " + riga);
+							continue;
+						}
 
-                        if (cognome.isBlank()) {
-                            System.out.println("Cognome utente mancante, riga ignorata: " + riga);
-                            continue;
-                        }
+						if (cognome.isBlank()) {
+							System.out.println("Cognome utente mancante, riga ignorata: " + riga);
+							continue;
+						}
 
-                        if (username.isBlank()) {
-                            System.out.println("Username mancante, riga ignorata: " + riga);
-                            continue;
-                        }
+						if (username.isBlank()) {
+							System.out.println("Username mancante, riga ignorata: " + riga);
+							continue;
+						}
 
-                        if (password.isBlank()) {
-                            System.out.println("Password mancante, riga ignorata: " + riga);
-                            continue;
-                        }
+						if (password.isBlank()) {
+							System.out.println("Password mancante, riga ignorata: " + riga);
+							continue;
+						}
 
-                        if (domicilio.isBlank()) {
-                            System.out.println("Domicilio mancante, riga ignorata: " + riga);
-                            continue;
-                        }
+						if (domicilio.isBlank()) {
+							System.out.println("Domicilio mancante, riga ignorata: " + riga);
+							continue;
+						}
 
-                        Utente utente = new Utente(
-                                nome,
-                                cognome,
-                                username,
-                                password,
-                                dataNascita,
-                                domicilio,
-                                ruolo
-                        );
+						Utente utente = new Utente(nome, cognome, username, password, dataNascita, domicilio, ruolo);
 
-                        utenti.add(utente);
+						utenti.add(utente);
 
-                    } catch (DateTimeParseException e) {
+					} catch (DateTimeParseException e) {
 
-                        System.out.println("Data di nascita non valida, riga ignorata: " + riga);
+						System.out.println("Data di nascita non valida, riga ignorata: " + riga);
 
-                    } catch (IllegalArgumentException e) {
+					} catch (IllegalArgumentException e) {
 
-                        System.out.println("Ruolo non valido, riga ignorata: " + riga);
+						System.out.println("Ruolo non valido, riga ignorata: " + riga);
 
-                    } catch (ArrayIndexOutOfBoundsException e) {
+					} catch (ArrayIndexOutOfBoundsException e) {
 
-                        System.out.println("Campi mancanti nella riga utente, riga ignorata: " + riga);
-                    }
-                }
-            }
+						System.out.println("Campi mancanti nella riga utente, riga ignorata: " + riga);
+					}
+				}
+			}
 
-            scanner.close();
+			scanner.close();
 
-        } catch (IOException e) {
+		} catch (IOException e) {
 
-            System.out.println("Errore durante il caricamento degli utenti.");
-        }
+			System.out.println("Errore durante il caricamento degli utenti.");
+		}
 
-        return utenti;
-    }
+		return utenti;
+	}
 
-    public void salvaUtente(Utente utente) {
+	/**
+	 * Salva su file (in fondo) un nuovo utente.
+	 *
+	 * @param utente utente interessato dall’operazione.
+	 */
+	public void salvaUtente(Utente utente) {
 
-        try {
+		try {
 
-            FileWriter writer = new FileWriter(percorsoFile, true);
+			FileWriter writer = new FileWriter(percorsoFile, true);
 
-            writer.write(
-                    utente.getNome() + "," +
-                    utente.getCognome() + "," +
-                    utente.getUsername() + "," +
-                    utente.getPassword() + "," +
-                    utente.getDataNascita() + "," +
-                    utente.getDomicilio() + "," +
-                    utente.getRuolo()
-            );
+			writer.write(utente.getNome() + "," + utente.getCognome() + "," + utente.getUsername() + ","
+					+ utente.getPassword() + "," + utente.getDataNascita() + "," + utente.getDomicilio() + ","
+					+ utente.getRuolo());
 
-            writer.write(System.lineSeparator());
-            writer.close();
+			writer.write(System.lineSeparator());
+			writer.close();
 
-        } catch (IOException e) {
+		} catch (IOException e) {
 
-            System.out.println("Errore durante il salvataggio dell'utente.");
+			System.out.println("Errore durante il salvataggio dell'utente.");
 
-        }
-    }
+		}
+	}
 }

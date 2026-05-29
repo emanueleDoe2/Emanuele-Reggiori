@@ -6,10 +6,11 @@
 
 package model;
 
+/**
+ * Definisce i ruoli gestiti dall’applicazione CineMax.
+ */
 public enum Ruolo {
 
-    CLIENTE,
-    PROIEZIONISTA,
-    BIGLIETTAIO
+	CLIENTE, PROIEZIONISTA, BIGLIETTAIO
 
 }

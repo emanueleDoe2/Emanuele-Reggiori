@@ -12,79 +12,86 @@ import service.AuthService;
 import service.ProiezioneService;
 import util.InputUtil;
 
+/**
+ * Gestisce l’interfaccia testuale disponibile per gli utenti non autenticati.
+ */
 public class MenuGuest {
 
-    private AuthService authservice;
-    private ProiezioneService proiezioneservice;
+	private AuthService authservice;
+	private ProiezioneService proiezioneservice;
 
-    public MenuGuest(AuthService authservice, ProiezioneService proiezioneservice) {
-        this.authservice = authservice;
-        this.proiezioneservice = proiezioneservice;
-    }
-	
+	/**
+	 * Crea una nuova istanza della classe MenuGuest.
+	 *
+	 * @param authservice       servizio di autenticazione.
+	 * @param proiezioneservice servizio delle proiezioni.
+	 */
+	public MenuGuest(AuthService authservice, ProiezioneService proiezioneservice) {
+		this.authservice = authservice;
+		this.proiezioneservice = proiezioneservice;
+	}
+
 	Scanner scanner = new Scanner(System.in);
-    
 
-    public void start() {
+	/**
+	 * Avvia il menu.
+	 */
+	public void start() {
 
-        int scelta;
+		int scelta;
 
-        do {
+		do {
 
-            stampaMenuGuest();
+			stampaMenuGuest();
 
-            scelta = InputUtil.leggiInteroObbligatorio(
-                    scanner,
-                    "Scelta: ",
-                    "Scelta non valida. Inserisci un numero."
-            );
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
 
-            if (scelta == 1) {
-          
-            	UICercaProiezioni uiCercaProiezioni =
-                        new UICercaProiezioni(proiezioneservice, scanner);
+			if (scelta == 1) {
 
-                uiCercaProiezioni.RicercaProiezioni();
+				UICercaProiezioni uiCercaProiezioni = new UICercaProiezioni(proiezioneservice, scanner);
 
-            } else if (scelta == 2) {
+				uiCercaProiezioni.RicercaProiezioni();
 
-                registrazione();
+			} else if (scelta == 2) {
 
-            } else if (scelta == 0) {
+				registrazione();
 
-                System.out.println("Ritorno al menu principale");
+			} else if (scelta == 0) {
 
-            } else {
+				System.out.println("Ritorno al menu principale");
 
-                System.out.println("Scelta non valida");
+			} else {
 
-            }
+				System.out.println("Scelta non valida");
 
-        } while (scelta != 0);
+			}
 
-    }
+		} while (scelta != 0);
 
-    public void stampaMenuGuest() {
+	}
 
-        System.out.println();
-        System.out.println("===== MENU GUEST =====");
-        System.out.println("1. Cerca proiezioni");
-        System.out.println("2. Registrati come cliente");
-        System.out.println("0. Torna al menu principale");
+	/**
+	 * Stampa le opzioni del menu guest.
+	 */
+	public void stampaMenuGuest() {
 
-    }
+		System.out.println();
+		System.out.println("===== MENU GUEST =====");
+		System.out.println("1. Cerca proiezioni");
+		System.out.println("2. Registrati come cliente");
+		System.out.println("0. Torna al menu principale");
 
-    
+	}
 
-    public void registrazione() {
-        	
-        UIRegistrazione menuRegistrazione =
-        		new UIRegistrazione(scanner, authservice);
-        	
-        menuRegistrazione.start();
-                
-        }
+	/**
+	 * Avvia la procedura di registrazione cliente.
+	 */
+	public void registrazione() {
 
-    
-    
+		UIRegistrazione menuRegistrazione = new UIRegistrazione(scanner, authservice);
+
+		menuRegistrazione.start();
+
+	}
+
 }

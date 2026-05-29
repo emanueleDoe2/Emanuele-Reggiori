@@ -10,244 +10,194 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-
 import util.InputUtil;
 import model.Utente;
 import model.Prenotazione;
 import service.PrenotazioneService;
 import service.AuthService;
 
+/**
+ * Gestisce l’interfaccia testuale dedicata al ruolo bigliettaio.
+ */
 public class MenuBigliettaio {
 
-    private Scanner scanner;
-    private PrenotazioneService prenotazioneservice;
-    private AuthService authservice;
+	private Scanner scanner;
+	private PrenotazioneService prenotazioneservice;
+	private AuthService authservice;
 
-    public MenuBigliettaio(Scanner scanner,
-                           Utente utente,
-                           PrenotazioneService prenotazioneservice,
-                           AuthService authservice) {
+	/**
+	 * Crea una nuova istanza della classe MenuBigliettaio.
+	 *
+	 * @param scanner             scanner utilizzato per leggere l’input da
+	 *                            terminale.
+	 * @param utente              utente interessato dall’operazione.
+	 * @param prenotazioneservice servizio delle prenotazioni.
+	 * @param authservice         servizio di autenticazione.
+	 */
+	public MenuBigliettaio(Scanner scanner, Utente utente, PrenotazioneService prenotazioneservice,
+			AuthService authservice) {
 
-        this.scanner = scanner;
-        this.prenotazioneservice = prenotazioneservice;
-        this.authservice = authservice;
-    }
+		this.scanner = scanner;
+		this.prenotazioneservice = prenotazioneservice;
+		this.authservice = authservice;
+	}
 
-    public void start() {
+	/**
+	 * Avvia il menu.
+	 */
+	public void start() {
 
-        int scelta;
+		int scelta;
 
-        do {
+		do {
 
-            stampaMenuBigliettaio();
+			stampaMenuBigliettaio();
 
-            scelta = InputUtil.leggiInteroObbligatorio(
-                    scanner,
-                    "Scelta: ",
-                    "Scelta non valida. Inserisci un numero."
-            );
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
 
-            if (scelta == 1) {
+			if (scelta == 1) {
 
-            	visualizzaPrenotazioniOggi();
+				visualizzaPrenotazioniOggi();
 
-            } else if (scelta == 2) {
+			} else if (scelta == 2) {
 
-            	cercaPrenotazioni();
+				cercaPrenotazioni();
 
+			} else if (scelta == 0) {
 
-            } else if (scelta == 0) {
+				System.out.println("Logout effettuato");
 
-                System.out.println("Logout effettuato");
+			} else {
 
-            } else {
+				System.out.println("Scelta non valida");
+			}
 
-                System.out.println("Scelta non valida");
-            }
+		} while (scelta != 0);
+	}
 
-        } while (scelta != 0);
-    }
-    
-    public void stampaMenuBigliettaio() {
+	/**
+	 * Stampa le opzioni del menu bigliettaio.
+	 */
+	public void stampaMenuBigliettaio() {
 
-        System.out.println();
-        System.out.println("===== MENU BIGLIETTAIO =====");
-        System.out.println("1. Visualizza prenotazioni di oggi");
-        System.out.println("2. Cerca prenotazione");
-        System.out.println("0. Logout");
-    }
-    
-    private void visualizzaPrenotazione(Prenotazione prenotazione) {
+		System.out.println();
+		System.out.println("===== MENU BIGLIETTAIO =====");
+		System.out.println("1. Visualizza prenotazioni di oggi");
+		System.out.println("2. Cerca prenotazione");
+		System.out.println("0. Logout");
+	}
 
-        System.out.println("===== DETTAGLIO PRENOTAZIONE =====");
+	/**
+	 * Stampa l’elenco delle prenotazioni ricevute.
+	 *
+	 * @param prenotazioni elenco delle prenotazioni.
+	 */
+	private void stampaPrenotazioni(ArrayList<Prenotazione> prenotazioni) {
 
-        
-        System.out.println("Codice: " + prenotazione.getCodicePrenotazione());
-        System.out.println("Username cliente: " + prenotazione.getUsername());
-        System.out.println("Film: " + prenotazione.getProiezione().getFilm().getTitolo());
-        System.out.println("Data e ora: " + prenotazione.getProiezione().getDataOra());
-        System.out.println("Posti prenotati: " + prenotazione.getNumeroPostiPrenotati());
-    }
-    
-    private Prenotazione selezionaPrenotazione(ArrayList<Prenotazione> prenotazioni) {
+		System.out.println("===== RISULTATI RICERCA =====");
 
-        while (true) {
+		if (prenotazioni.isEmpty()) {
+			System.out.println("Nessuna prenotazione trovata.");
+			return;
+		}
 
-            System.out.print("Seleziona una prenotazione, oppure 0 per tornare indietro: ");
+		for (int i = 0; i < prenotazioni.size(); i++) {
 
-            int scelta = InputUtil.leggiInteroObbligatorio(
-	                scanner,
-	                "Scelta: ",
-	                "Scelta non valida. Inserisci un numero."
-	        );
+			Prenotazione prenotazione = prenotazioni.get(i);
 
-            if (scelta == 0) {
-                return null;
-            }
+			Utente utente = authservice.trovaUtentePerUsername(prenotazione.getUsername());
 
-            if (scelta >= 1 && scelta <= prenotazioni.size()) {
-                return prenotazioni.get(scelta - 1);
-            }
+			double costoUnitario = prenotazione.getProiezione().getCostoBiglietto();
+			double totale = costoUnitario * prenotazione.getNumeroPostiPrenotati();
 
-            System.out.println("Scelta non valida");
-        }
-    }
-    
-    private void stampaPrenotazioni(ArrayList<Prenotazione> prenotazioni) {
+			System.out.println((i + 1) + ". Codice prenotazione: " + prenotazione.getCodicePrenotazione());
 
-        System.out.println("===== RISULTATI RICERCA =====");
+			if (utente != null) {
+				System.out.println("Cliente: " + utente.getNome() + " " + utente.getCognome());
+			} else {
+				System.out.println("Cliente: " + prenotazione.getUsername());
+			}
 
-        if (prenotazioni.isEmpty()) {
-            System.out.println("Nessuna prenotazione trovata.");
-            return;
-        }
+			System.out.println("Film: " + prenotazione.getProiezione().getFilm().getTitolo());
 
-        for (int i = 0; i < prenotazioni.size(); i++) {
+			System.out.println("Data e ora: " + prenotazione.getProiezione().getDataOra());
 
-            Prenotazione prenotazione = prenotazioni.get(i);
+			System.out.println("Numero biglietti: " + prenotazione.getNumeroPostiPrenotati());
 
-            Utente utente = authservice.trovaUtentePerUsername(prenotazione.getUsername());
+			System.out.println("Costo unitario: " + costoUnitario + " euro");
 
-            double costoUnitario = prenotazione.getProiezione().getCostoBiglietto();
-            double totale = costoUnitario * prenotazione.getNumeroPostiPrenotati();
+			System.out.println("Costo totale: " + totale + " euro");
 
-            System.out.println((i + 1) + ". Codice prenotazione: " 
-                    + prenotazione.getCodicePrenotazione());
+			System.out.println("--------------------------------");
+		}
+	}
 
-            if (utente != null) {
-                System.out.println("Cliente: " 
-                        + utente.getNome() + " " + utente.getCognome());
-            } else {
-                System.out.println("Cliente: " + prenotazione.getUsername());
-            }
+	/**
+	 * Gestisce da terminale la ricerca delle prenotazioni.
+	 */
+	private void cercaPrenotazioni() {
 
-            System.out.println("Film: " 
-                    + prenotazione.getProiezione().getFilm().getTitolo());
+		System.out.println("===== CERCA PRENOTAZIONI =====");
 
-            System.out.println("Data e ora: " 
-                    + prenotazione.getProiezione().getDataOra());
+		System.out.print("Codice prenotazione: ");
+		String codicePrenotazione = scanner.nextLine().trim();
 
-            System.out.println("Numero biglietti: " 
-                    + prenotazione.getNumeroPostiPrenotati());
+		if (codicePrenotazione.isEmpty()) {
+			codicePrenotazione = null;
+		}
 
-            System.out.println("Costo unitario: " 
-                    + costoUnitario + " euro");
+		System.out.print("Nome cliente: ");
+		String nomeCliente = scanner.nextLine().trim();
 
-            System.out.println("Costo totale: " 
-                    + totale + " euro");
+		if (nomeCliente.isEmpty()) {
+			nomeCliente = null;
+		}
 
-            System.out.println("--------------------------------");
-        }
-    }
-    
-    private void cercaPrenotazioni() {
+		System.out.print("Cognome cliente: ");
+		String cognomeCliente = scanner.nextLine().trim();
 
-        System.out.println("===== CERCA PRENOTAZIONI =====");
+		if (cognomeCliente.isEmpty()) {
+			cognomeCliente = null;
+		}
 
-        System.out.print("Codice prenotazione: ");
-        String codicePrenotazione = scanner.nextLine().trim();
+		System.out.print("Titolo film: ");
+		String titoloFilm = scanner.nextLine().trim();
 
-        if (codicePrenotazione.isEmpty()) {
-            codicePrenotazione = null;
-        }
+		if (titoloFilm.isEmpty()) {
+			titoloFilm = null;
+		}
 
-        System.out.print("Nome cliente: ");
-        String nomeCliente = scanner.nextLine().trim();
+		LocalDate dataDa = InputUtil.leggiDataFacoltativa(scanner, "Data da (YYYY-MM-DD): ");
 
-        if (nomeCliente.isEmpty()) {
-            nomeCliente = null;
-        }
+		LocalDate dataA = InputUtil.leggiDataFacoltativa(scanner, "Data a (YYYY-MM-DD): ");
 
-        System.out.print("Cognome cliente: ");
-        String cognomeCliente = scanner.nextLine().trim();
+		ArrayList<Prenotazione> risultati = prenotazioneservice.cercaPrenotazioni(codicePrenotazione, nomeCliente,
+				cognomeCliente, titoloFilm, dataDa, dataA);
 
-        if (cognomeCliente.isEmpty()) {
-            cognomeCliente = null;
-        }
+		if (risultati.isEmpty()) {
 
-        System.out.print("Titolo film: ");
-        String titoloFilm = scanner.nextLine().trim();
+			System.out.println("Nessuna prenotazione trovata");
+			return;
+		}
 
-        if (titoloFilm.isEmpty()) {
-            titoloFilm = null;
-        }
+		stampaPrenotazioni(risultati);
 
-        LocalDate dataDa =
-                InputUtil.leggiDataFacoltativa(
-                        scanner,
-                        "Data da (YYYY-MM-DD): "
-                );
+	}
 
-        LocalDate dataA =
-                InputUtil.leggiDataFacoltativa(
-                        scanner,
-                        "Data a (YYYY-MM-DD): "
-                );
+	/**
+	 * Mostra le prenotazioni della data odierna.
+	 */
+	private void visualizzaPrenotazioniOggi() {
 
-        ArrayList<Prenotazione> risultati =
-                prenotazioneservice.cercaPrenotazioni(
-                        codicePrenotazione,
-                        nomeCliente,
-                        cognomeCliente,
-                        titoloFilm,
-                        dataDa,
-                        dataA
-                );
+		ArrayList<Prenotazione> prenotazioniOggi = prenotazioneservice.getPrenotazioniOggi();
 
-        if (risultati.isEmpty()) {
+		if (prenotazioniOggi.isEmpty()) {
 
-            System.out.println("Nessuna prenotazione trovata");
-            return;
-        }
+			System.out.println("Non ci sono prenotazioni per oggi");
+			return;
+		}
 
-        stampaPrenotazioni(risultati);
+		stampaPrenotazioni(prenotazioniOggi);
 
-        Prenotazione prenotazioneSelezionata =
-                selezionaPrenotazione(risultati);
-
-        if (prenotazioneSelezionata != null) {
-            visualizzaPrenotazione(prenotazioneSelezionata);
-        }
-    }
-    
-    private void visualizzaPrenotazioniOggi() {
-
-        ArrayList<Prenotazione> prenotazioniOggi =
-                prenotazioneservice.getPrenotazioniOggi();
-
-        if (prenotazioniOggi.isEmpty()) {
-
-            System.out.println("Non ci sono prenotazioni per oggi");
-            return;
-        }
-
-        stampaPrenotazioni(prenotazioniOggi);
-
-        Prenotazione prenotazioneSelezionata =
-                selezionaPrenotazione(prenotazioniOggi);
-
-        if (prenotazioneSelezionata != null) {
-            visualizzaPrenotazione(prenotazioneSelezionata);
-        }
-    }
+	}
 }

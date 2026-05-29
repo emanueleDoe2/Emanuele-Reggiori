@@ -19,6 +19,10 @@ import repository.ProiezioniRepository;
 import repository.UserRepository;
 import ui.MenuPrincipale;
 
+/**
+ * Classe principale dell’applicazione CineMax. Inizializza repository, servizi
+ * e menu principale.
+ */
 public class CineMax {
 
 	public static void main(String[] args) {

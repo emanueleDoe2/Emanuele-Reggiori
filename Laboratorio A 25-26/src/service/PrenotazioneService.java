@@ -15,24 +15,44 @@ import model.Proiezione;
 import model.Utente;
 import repository.PrenotazioniRepository;
 
+/**
+ * Contiene la logica applicativa relativa alla creazione, ricerca, modifica ed
+ * eliminazione delle prenotazioni.
+ */
 public class PrenotazioneService {
 
 	private AuthService authservice;
-	private ArrayList<Utente> utenti;
 	private ArrayList<Prenotazione> prenotazioni;
 	private PrenotazioniRepository prenotazioniRepository;
 	private ProiezioneService proiezioneService;
 
+	/**
+	 * Crea una nuova istanza della classe PrenotazioneService.
+	 *
+	 * @param prenotazioni           elenco delle prenotazioni caricate.
+	 * @param prenotazioniRepository repository delle prenotazioni.
+	 * @param proiezioneService      servizio delle proiezioni.
+	 * @param utenti                 elenco degli utenti caricati.
+	 * @param authservice            servizio di autenticazione.
+	 */
 	public PrenotazioneService(ArrayList<Prenotazione> prenotazioni, PrenotazioniRepository prenotazioniRepository,
 			ProiezioneService proiezioneService, ArrayList<Utente> utenti, AuthService authservice) {
 
 		this.prenotazioni = prenotazioni;
 		this.prenotazioniRepository = prenotazioniRepository;
 		this.proiezioneService = proiezioneService;
-		this.utenti = utenti;
 		this.authservice = authservice;
 	}
 
+	/**
+	 * Richiede il numero di posti e crea una prenotazione.
+	 *
+	 * @param utente      utente che effettua l'operazione.
+	 * @param proiezione  proiezione da prenotare.
+	 * @param numeroPosti numero di posti richiesti.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	public boolean creaPrenotazione(Utente utente, Proiezione proiezione, int numeroPosti) {
 
 		if (utente == null || proiezione == null) {
@@ -59,14 +79,27 @@ public class PrenotazioneService {
 		return true;
 	}
 
+	/**
+	 * Genera un codice prenotazione univoco. Controlla se esistono già codici
+	 * prenotazione uguali.
+	 *
+	 * @return valore testuale richiesto.
+	 */
 	private String generaCodicePrenotazione() {
-	    String codice;
-	    do {
-	        codice = "PRE-" + UUID.randomUUID().toString().substring(0, 8);
-	    } while (codicePrenotazioneEsiste(codice));
-	    return codice;
+		String codice;
+		do {
+			codice = "PRE-" + UUID.randomUUID().toString().substring(0, 8);
+		} while (codicePrenotazioneEsiste(codice));
+		return codice;
 	}
 
+	/**
+	 * Restituisce le prenotazioni associate a uno specifico utente.
+	 *
+	 * @param utente utente interessato dall’operazione.
+	 *
+	 * @return elenco dei risultati ottenuti.
+	 */
 	public ArrayList<Prenotazione> getPrenotazioniUtente(Utente utente) {
 
 		ArrayList<Prenotazione> risultati = new ArrayList<>();
@@ -82,6 +115,13 @@ public class PrenotazioneService {
 		return risultati;
 	}
 
+	/**
+	 * Elimina una prenotazione solo se la data della prenotazione è prima di oggi.
+	 *
+	 * @param prenotazioneDaEliminare prenotazione da eliminare.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	public boolean eliminaPrenotazione(Prenotazione prenotazioneDaEliminare) {
 
 		if (prenotazioneDaEliminare == null) {
@@ -100,19 +140,18 @@ public class PrenotazioneService {
 
 		for (int i = 0; i < prenotazioni.size(); i++) {
 
-		    Prenotazione prenotazione = prenotazioni.get(i);
+			Prenotazione prenotazione = prenotazioni.get(i);
 
-		    if (prenotazione.getCodicePrenotazione()
-		            .equals(prenotazioneDaEliminare.getCodicePrenotazione())) {
+			if (prenotazione.getCodicePrenotazione().equals(prenotazioneDaEliminare.getCodicePrenotazione())) {
 
-		        prenotazioni.remove(i);
-		        rimossa = true;
-		        break;
-		    }
+				prenotazioni.remove(i);
+				rimossa = true;
+				break;
+			}
 		}
 
 		if (rimossa) {
-		    prenotazioniRepository.salvaPrenotazioni(prenotazioni);
+			prenotazioniRepository.salvaPrenotazioni(prenotazioni);
 		}
 
 		if (rimossa) {
@@ -122,6 +161,13 @@ public class PrenotazioneService {
 		return rimossa;
 	}
 
+	/**
+	 * Restituisce le proiezioni alternative disponibili per lo stesso film.
+	 *
+	 * @param prenotazione prenotazione che si vuole modificare.
+	 *
+	 * @return elenco dei risultati ottenuti.
+	 */
 	public ArrayList<Proiezione> getProiezioniAlternative(Prenotazione prenotazione) {
 
 		ArrayList<Proiezione> risultati = new ArrayList<>();
@@ -150,6 +196,15 @@ public class PrenotazioneService {
 		return risultati;
 	}
 
+	/**
+	 * Modifica la data di una prenotazione selezionando una nuova proiezione.
+	 *
+	 * @param prenotazioneDaModificare prenotazione da modificare.
+	 * @param nuovaProiezione          nuova proiezione da associare alla
+	 *                                 prenotazione.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	public boolean modificaPrenotazione(Prenotazione prenotazioneDaModificare, Proiezione nuovaProiezione) {
 
 		if (prenotazioneDaModificare == null || nuovaProiezione == null) {
@@ -196,6 +251,18 @@ public class PrenotazioneService {
 		return false;
 	}
 
+	/**
+	 * Gestisce la ricerca delle prenotazioni.
+	 *
+	 * @param codicePrenotazione codice identificativo della prenotazione.
+	 * @param nomeCliente        nome del cliente da cercare.
+	 * @param cognomeCliente     cognome del cliente da cercare.
+	 * @param titoloFilm         titolo del film da cercare.
+	 * @param dataDa             data iniziale del filtro.
+	 * @param dataA              data finale del filtro.
+	 *
+	 * @return elenco dei risultati ottenuti.
+	 */
 	public ArrayList<Prenotazione> cercaPrenotazioni(String codicePrenotazione, String nomeCliente,
 			String cognomeCliente, String titoloFilm, LocalDate dataDa, LocalDate dataA) {
 
@@ -245,10 +312,7 @@ public class PrenotazioneService {
 			if ((nomeCliente != null && !nomeCliente.isBlank())
 					|| (cognomeCliente != null && !cognomeCliente.isBlank())) {
 
-				Utente utentePrenotazione =
-				        authservice.trovaUtentePerUsername(
-				                prenotazione.getUsername()
-				        );
+				Utente utentePrenotazione = authservice.trovaUtentePerUsername(prenotazione.getUsername());
 
 				if (utentePrenotazione == null) {
 
@@ -287,38 +351,47 @@ public class PrenotazioneService {
 
 		return risultati;
 	}
-	
+
+	/**
+	 * Restituisce le prenotazioni relative alla data odierna.
+	 *
+	 * @return elenco dei risultati ottenuti.
+	 */
 	public ArrayList<Prenotazione> getPrenotazioniOggi() {
 
-	    ArrayList<Prenotazione> risultati = new ArrayList<>();
+		ArrayList<Prenotazione> risultati = new ArrayList<>();
 
-	    LocalDate oggi = LocalDate.now();
+		LocalDate oggi = LocalDate.now();
 
-	    for (Prenotazione prenotazione : prenotazioni) {
+		for (Prenotazione prenotazione : prenotazioni) {
 
-	        LocalDate dataPrenotazione =
-	                prenotazione.getProiezione()
-	                        .getDataOra()
-	                        .toLocalDate();
+			LocalDate dataPrenotazione = prenotazione.getProiezione().getDataOra().toLocalDate();
 
-	        if (dataPrenotazione.equals(oggi)) {
-	            risultati.add(prenotazione);
-	        }
-	    }
+			if (dataPrenotazione.equals(oggi)) {
+				risultati.add(prenotazione);
+			}
+		}
 
-	    return risultati;
+		return risultati;
 	}
-	
+
+	/**
+	 * Verifica se un codice prenotazione è già presente.
+	 *
+	 * @param codice codice prenotazione da verificare.
+	 *
+	 * @return true se l’operazione ha esito positivo, false altrimenti.
+	 */
 	private boolean codicePrenotazioneEsiste(String codice) {
 
-	    ArrayList<Prenotazione> prenotazioni = prenotazioniRepository.caricaPrenotazioni();
+		ArrayList<Prenotazione> prenotazioni = prenotazioniRepository.caricaPrenotazioni();
 
-	    for (Prenotazione prenotazione : prenotazioni) {
-	        if (prenotazione.getCodicePrenotazione().equalsIgnoreCase(codice)) {
-	            return true;
-	        }
-	    }
+		for (Prenotazione prenotazione : prenotazioni) {
+			if (prenotazione.getCodicePrenotazione().equalsIgnoreCase(codice)) {
+				return true;
+			}
+		}
 
-	    return false;
+		return false;
 	}
 }

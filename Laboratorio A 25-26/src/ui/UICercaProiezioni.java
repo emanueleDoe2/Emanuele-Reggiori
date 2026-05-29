@@ -14,16 +14,31 @@ import model.Proiezione;
 import service.ProiezioneService;
 import util.InputUtil;
 
+/**
+ * Gestisce la procedura comune di ricerca e selezione delle proiezioni.
+ */
 public class UICercaProiezioni {
 
 	private Scanner scanner;
 	private ProiezioneService proiezioneservice;
 
+	/**
+	 * Crea una nuova istanza della classe UICercaProiezioni.
+	 *
+	 * @param proiezioneservice servizio delle proiezioni.
+	 * @param scanner           scanner utilizzato per leggere l’input da terminale.
+	 */
 	public UICercaProiezioni(ProiezioneService proiezioneservice, Scanner scanner) {
 		this.proiezioneservice = proiezioneservice;
 		this.scanner = scanner;
 	}
 
+	/**
+	 * Gestisce la ricerca, la visualizzazione dei risultati e la selezione di una
+	 * proiezione.
+	 *
+	 * @return proiezione selezionata, oppure null se non disponibile.
+	 */
 	public Proiezione RicercaProiezioni() {
 
 		System.out.println("===== CERCA PROIEZIONI =====");
@@ -48,7 +63,7 @@ public class UICercaProiezioni {
 
 		Double costoMin = InputUtil.leggiDoubleFacoltativo(scanner, "Costo minimo: ");
 
-		Double costoMax = InputUtil.leggiDoubleFacoltativo(scanner, "Costo minimo: ");
+		Double costoMax = InputUtil.leggiDoubleFacoltativo(scanner, "Costo massimo: ");
 
 		ArrayList<Proiezione> risultati = proiezioneservice.cercaProiezioni(titolo, genere, dataDa, dataA, costoMin,
 				costoMax);
@@ -72,46 +87,48 @@ public class UICercaProiezioni {
 
 			while (true) {
 
-			    System.out.print("Seleziona una proiezione da visualizzare, oppure 0 per tornare indietro: ");
+				System.out.print("Seleziona una proiezione da visualizzare, oppure 0 per tornare indietro: ");
 
-			    int scelta = InputUtil.leggiInteroObbligatorio(
-			            scanner,
-			            "Scelta: ",
-			            "Scelta non valida. Inserisci un numero."
-			    );
+				int scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ",
+						"Scelta non valida. Inserisci un numero.");
 
-			    if (scelta == 0) {
-			        return null;
-			    }
+				if (scelta == 0) {
+					return null;
+				}
 
-			    if (scelta >= 1 && scelta <= risultati.size()) {
+				if (scelta >= 1 && scelta <= risultati.size()) {
 
-			        Proiezione proiezioneSelezionata = risultati.get(scelta - 1);
+					Proiezione proiezioneSelezionata = risultati.get(scelta - 1);
 
-			        visualizzaProiezione(proiezioneSelezionata);
+					visualizzaProiezione(proiezioneSelezionata);
 
-			        return proiezioneSelezionata;
+					return proiezioneSelezionata;
 
-			    } else {
+				} else {
 
-			        System.out.println("Scelta non valida");
-			    }
+					System.out.println("Scelta non valida");
+				}
 			}
 		}
 	}
 
+	/**
+	 * Stampa a video il dettaglio di una proiezione.
+	 *
+	 * @param proiezione proiezione da stampare.
+	 */
 	private void visualizzaProiezione(Proiezione proiezione) {
 
-        System.out.println("===== DETTAGLIO PROIEZIONE =====");
+		System.out.println("===== DETTAGLIO PROIEZIONE =====");
 
-        System.out.println("Titolo: " + proiezione.getFilm().getTitolo());
-        System.out.println("Genere: " + proiezione.getFilm().getGenere());
-        System.out.println("Regista: " + proiezione.getFilm().getRegista());
-        System.out.println("Anno: " + proiezione.getFilm().getAnno());
-        System.out.println("Durata: " + proiezione.getFilm().getDurata() + " minuti");
-        System.out.println("Data e ora: " + proiezione.getDataOra());
-        System.out.println("Costo biglietto: " + proiezione.getCostoBiglietto() + "€");
-        System.out.println("Posti disponibili: " + proiezioneservice.getPostiDisponibili(proiezione));
-    }
+		System.out.println("Titolo: " + proiezione.getFilm().getTitolo());
+		System.out.println("Genere: " + proiezione.getFilm().getGenere());
+		System.out.println("Regista: " + proiezione.getFilm().getRegista());
+		System.out.println("Anno: " + proiezione.getFilm().getAnno());
+		System.out.println("Durata: " + proiezione.getFilm().getDurata() + " minuti");
+		System.out.println("Data e ora: " + proiezione.getDataOra());
+		System.out.println("Costo biglietto: " + proiezione.getCostoBiglietto() + "€");
+		System.out.println("Posti disponibili: " + proiezioneservice.getPostiDisponibili(proiezione));
+	}
 
 }

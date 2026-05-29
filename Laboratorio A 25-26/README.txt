@@ -23,10 +23,14 @@ STRUTTURA DEL PROGETTO
 
 - data/
   Directory utilizzata dall'applicazione per i file CSV.
-  Il file proiezioni.csv viene creato automaticamente dal programma se non presente.
+  Il file prenotazioni.csv viene creato automaticamente dal programma se non presente.
   Gli altri file CSV utilizzati sono:
+  
   utenti.csv
-  prenotazioni.csv
+  proiezioni.csv
+  
+  Si suppone che questi 2 files siano già presenti nella cartella data alla prima esecuzione del programma.
+  
 
   Mentre gli utenti di tipo cliente possono essere creati da programma, gli utenti di tipo bigliettaio e proiezionista si suppone possano essere creati solo da admin/server side. 
   Delle utenze di prova sono le seguenti:

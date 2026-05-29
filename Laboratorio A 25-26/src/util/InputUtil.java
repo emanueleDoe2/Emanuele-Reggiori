@@ -11,8 +11,20 @@ import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Fornisce metodi di utilità per leggere e validare input da terminale.
+ */
 public class InputUtil {
 
+	/**
+	 * Legge una stringa obbligatoria da terminale.
+	 *
+	 * @param scanner         scanner utilizzato per leggere l’input da terminale.
+	 * @param messaggio       messaggio da mostrare prima della lettura.
+	 * @param messaggioErrore messaggio da mostrare in caso di input non valido.
+	 *
+	 * @return valore testuale richiesto.
+	 */
 	public static String leggiStringaObbligatoria(Scanner scanner, String messaggio, String messaggioErrore) {
 
 		String valore = "";
@@ -32,6 +44,14 @@ public class InputUtil {
 		return valore;
 	}
 
+	/**
+	 * Legge una data facoltativa da terminale.
+	 *
+	 * @param scanner   scanner utilizzato per leggere l’input da terminale.
+	 * @param messaggio messaggio da mostrare prima della lettura.
+	 *
+	 * @return oggetto richiesto, oppure null se non disponibile.
+	 */
 	public static LocalDate leggiDataFacoltativa(Scanner scanner, String messaggio) {
 
 		while (true) {
@@ -55,6 +75,14 @@ public class InputUtil {
 		}
 	}
 
+	/**
+	 * Legge un numero decimale facoltativo da terminale.
+	 *
+	 * @param scanner   scanner utilizzato per leggere l’input da terminale.
+	 * @param messaggio messaggio da mostrare prima della lettura.
+	 *
+	 * @return valore letto dal metodo.
+	 */
 	public static Double leggiDoubleFacoltativo(Scanner scanner, String messaggio) {
 
 		while (true) {
@@ -78,6 +106,15 @@ public class InputUtil {
 		}
 	}
 
+	/**
+	 * Legge un numero intero obbligatorio da terminale.
+	 *
+	 * @param scanner         scanner utilizzato per leggere l’input da terminale.
+	 * @param messaggio       messaggio da mostrare prima della lettura.
+	 * @param messaggioErrore messaggio da mostrare in caso di input non valido.
+	 *
+	 * @return valore letto dal metodo.
+	 */
 	public static int leggiInteroObbligatorio(Scanner scanner, String messaggio, String messaggioErrore) {
 
 		while (true) {
@@ -93,6 +130,15 @@ public class InputUtil {
 		}
 	}
 
+	/**
+	 * Legge un numero decimale obbligatorio da terminale.
+	 *
+	 * @param scanner         scanner utilizzato per leggere l’input da terminale.
+	 * @param messaggio       messaggio da mostrare prima della lettura.
+	 * @param messaggioErrore messaggio da mostrare in caso di input non valido.
+	 *
+	 * @return valore letto dal metodo.
+	 */
 	public static Double leggiDoubleObbligatorio(Scanner scanner, String messaggio, String messaggioErrore) {
 
 		while (true) {
@@ -108,6 +154,14 @@ public class InputUtil {
 		}
 	}
 
+	/**
+	 * Legge una data e ora obbligatoria da terminale.
+	 *
+	 * @param scanner   scanner utilizzato per leggere l’input da terminale.
+	 * @param messaggio messaggio da mostrare prima della lettura.
+	 *
+	 * @return oggetto richiesto.
+	 */
 	public static LocalDateTime leggiDataOraObbligatoria(Scanner scanner, String messaggio) {
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -128,6 +182,5 @@ public class InputUtil {
 			}
 		}
 	}
-	
-	
+
 }

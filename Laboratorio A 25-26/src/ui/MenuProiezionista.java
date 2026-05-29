@@ -16,225 +16,190 @@ import model.Utente;
 import service.AuthService;
 import service.ProiezioneService;
 
+/**
+ * Gestisce l’interfaccia testuale dedicata al ruolo proiezionista.
+ */
 public class MenuProiezionista {
 
-    private Scanner scanner;
-    private Utente utente;
-    private AuthService authservice;
-    private ProiezioneService proiezioneservice;
+	private Scanner scanner;
+	private ProiezioneService proiezioneservice;
 
-    public MenuProiezionista(Scanner scanner,
-                             Utente utente,
-                             AuthService authservice,
-                             ProiezioneService proiezioneservice) {
+	/**
+	 * Crea una nuova istanza della classe MenuProiezionista.
+	 *
+	 * @param scanner           scanner utilizzato per leggere l’input da terminale.
+	 * @param utente            utente che effettua l’operazione.
+	 * @param authservice       servizio di autenticazione.
+	 * @param proiezioneservice servizio delle proiezioni.
+	 */
+	public MenuProiezionista(Scanner scanner, Utente utente, AuthService authservice,
+			ProiezioneService proiezioneservice) {
 
-        this.scanner = scanner;
-        this.utente = utente;
-        this.authservice = authservice;
-        this.proiezioneservice = proiezioneservice;
-    }
+		this.scanner = scanner;
+		this.proiezioneservice = proiezioneservice;
+	}
 
-    public void start() {
+	/**
+	 * Avvia il menu.
+	 */
+	public void start() {
 
-        int scelta;
+		int scelta;
 
-        do {
+		do {
 
-            stampaMenuProiezionista();
+			stampaMenuProiezionista();
 
-            scelta = InputUtil.leggiInteroObbligatorio(
-                    scanner,
-                    "Scelta: ",
-                    "Scelta non valida. Inserisci un numero."
-            );
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
 
-            if (scelta == 1) {
+			if (scelta == 1) {
 
-            	inserisciProiezione();
+				inserisciProiezione();
 
-            } else if (scelta == 2) {
+			} else if (scelta == 2) {
 
-            	modificaDataProiezione();
+				modificaDataProiezione();
 
-            } else if (scelta == 3) {
+			} else if (scelta == 3) {
 
-            	eliminaProiezione();
+				eliminaProiezione();
 
-            } else if (scelta == 0) {
+			} else if (scelta == 0) {
 
-                System.out.println("Logout effettuato");
+				System.out.println("Logout effettuato");
 
-            } else {
+			} else {
 
-                System.out.println("Scelta non valida");
-            }
+				System.out.println("Scelta non valida");
+			}
 
-        } while (scelta != 0);
-    }
+		} while (scelta != 0);
+	}
 
-    public void stampaMenuProiezionista() {
+	/**
+	 * Stampa le opzioni del menu proiezionista.
+	 */
+	public void stampaMenuProiezionista() {
 
-        System.out.println();
-        System.out.println("===== MENU PROIEZIONISTA =====");
-        System.out.println("1. Inserisci film/proiezione");
-        System.out.println("2. Modifica data proiezione");
-        System.out.println("3. Elimina proiezione");
-        System.out.println("0. Logout");
-    }
-    
-    private void inserisciProiezione() {
+		System.out.println();
+		System.out.println("===== MENU PROIEZIONISTA =====");
+		System.out.println("1. Inserisci film/proiezione");
+		System.out.println("2. Modifica data proiezione");
+		System.out.println("3. Elimina proiezione");
+		System.out.println("0. Logout");
+	}
 
-        System.out.println("===== INSERISCI FILM / PROIEZIONE =====");
+	/**
+	 * Gestisce l’inserimento di un film e di una o più proiezioni associate.
+	 */
+	private void inserisciProiezione() {
 
-        String titolo = InputUtil.leggiStringaObbligatoria(
-                scanner,
-                "Titolo: ",
-                "Il titolo è obbligatorio"
-        );
+		System.out.println("===== INSERISCI FILM =====");
 
-        String genere = InputUtil.leggiStringaObbligatoria(
-                scanner,
-                "Genere: ",
-                "Il genere è obbligatorio"
-        );
+		String titolo = InputUtil.leggiStringaObbligatoria(scanner, "Titolo: ", "Il titolo è obbligatorio");
 
-        String regista = InputUtil.leggiStringaObbligatoria(
-                scanner,
-                "Regista: ",
-                "Il regista è obbligatorio"
-        );
+		String genere = InputUtil.leggiStringaObbligatoria(scanner, "Genere: ", "Il genere è obbligatorio");
 
-        int anno = InputUtil.leggiInteroObbligatorio(
-                scanner,
-                "Anno: ",
-                "Anno non valido"
-        );
+		String regista = InputUtil.leggiStringaObbligatoria(scanner, "Regista: ", "Il regista è obbligatorio");
 
-        int durata = InputUtil.leggiInteroObbligatorio(
-                scanner,
-                "Durata in minuti: ",
-                "Durata non valida"
-        );
+		int anno = InputUtil.leggiInteroObbligatorio(scanner, "Anno: ", "Anno non valido");
 
-        int etaMinima = InputUtil.leggiInteroObbligatorio(
-                scanner,
-                "Età minima: ",
-                "Età minima non valida"
-        );
+		int durata = InputUtil.leggiInteroObbligatorio(scanner, "Durata in minuti: ", "Durata non valida");
 
-        LocalDateTime dataOra = InputUtil.leggiDataOraObbligatoria(
-                scanner,
-                "Data e ora proiezione (YYYY-MM-DD HH:mm:ss): "
-        );
+		int etaMinima = InputUtil.leggiInteroObbligatorio(scanner, "Età minima: ", "Età minima non valida");
 
-        Double costoBiglietto = InputUtil.leggiDoubleObbligatorio(
-                scanner,
-                "Costo biglietto: ",
-                "Costo non valido"
-        );
+		Film film = new Film(titolo, genere, regista, anno, durata, etaMinima);
 
-        Film film = new Film(
-                titolo,
-                genere,
-                regista,
-                anno,
-                durata,
-                etaMinima
-        );
+		int scelta;
 
-        Proiezione proiezione = new Proiezione(
-                film,
-                dataOra,
-                costoBiglietto
-        );
+		do {
 
-        boolean inserita = proiezioneservice.aggiungiProiezione(proiezione);
+			System.out.println("===== INSERISCI PROIEZIONE =====");
 
-        if (inserita) {
-            System.out.println("Proiezione inserita correttamente");
-        } else {
-            System.out.println("Inserimento fallito: proiezione sovrapposta o non valida");
-        }
-    }
-    
-    private void eliminaProiezione() {
+			LocalDateTime dataOra = InputUtil.leggiDataOraObbligatoria(scanner,
+					"Data e ora proiezione (YYYY-MM-DD HH:mm:ss): ");
 
-        UICercaProiezioni uiCercaProiezioni =
-                new UICercaProiezioni(proiezioneservice, scanner);
+			Double costoBiglietto = InputUtil.leggiDoubleObbligatorio(scanner, "Costo biglietto: ", "Costo non valido");
 
-        Proiezione proiezioneSelezionata =
-                uiCercaProiezioni.RicercaProiezioni();
+			Proiezione proiezione = new Proiezione(film, dataOra, costoBiglietto);
 
-        if (proiezioneSelezionata == null) {
-            return;
-        }
+			boolean inserita = proiezioneservice.aggiungiProiezione(proiezione);
 
-        System.out.println("Confermi l'eliminazione della proiezione?");
-        System.out.println("1. Sì");
-        System.out.println("0. No");
-        int conferma = InputUtil.leggiInteroObbligatorio(
-                scanner,
-                "Scelta: ",
-                "Scelta non valida. Inserisci un numero."
-        );
+			if (inserita) {
+				System.out.println("Proiezione inserita correttamente");
+			} else {
+				System.out.println("Inserimento fallito: proiezione sovrapposta o non valida");
+			}
 
-        if (conferma == 1) {
+			scelta = InputUtil.leggiInteroObbligatorio(scanner,
+					"Vuoi inserire un'altra proiezione per questo film? 1 = sì, 0 = no: ", "Scelta non valida");
 
-            boolean eliminata =
-                    proiezioneservice.eliminaProiezione(
-                            proiezioneSelezionata
-                    );
+		} while (scelta == 1);
+	}
 
-            if (eliminata) {
+	/**
+	 * Elimina una proiezione se è passata e non ha prenotazioni.
+	 */
+	private void eliminaProiezione() {
 
-                System.out.println("Proiezione eliminata correttamente");
+		UICercaProiezioni uiCercaProiezioni = new UICercaProiezioni(proiezioneservice, scanner);
 
-            } else {
+		Proiezione proiezioneSelezionata = uiCercaProiezioni.RicercaProiezioni();
 
-                System.out.println(
-                        "Eliminazione non consentita: proiezione già passata o con prenotazioni"
-                );
-            }
+		if (proiezioneSelezionata == null) {
+			return;
+		}
 
-        } else {
+		System.out.println("Confermi l'eliminazione della proiezione?");
+		System.out.println("1. Sì");
+		System.out.println("0. No");
+		int conferma = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ",
+				"Scelta non valida. Inserisci un numero.");
 
-            System.out.println("Eliminazione annullata");
-        }
-    }
-    
-    private void modificaDataProiezione() {
+		if (conferma == 1) {
 
-        UICercaProiezioni uiCercaProiezioni =
-                new UICercaProiezioni(proiezioneservice, scanner);
+			boolean eliminata = proiezioneservice.eliminaProiezione(proiezioneSelezionata);
 
-        Proiezione proiezioneSelezionata =
-                uiCercaProiezioni.RicercaProiezioni();
+			if (eliminata) {
 
-        if (proiezioneSelezionata == null) {
-            return;
-        }
+				System.out.println("Proiezione eliminata correttamente");
 
-        LocalDateTime nuovaDataOra =
-                InputUtil.leggiDataOraObbligatoria(
-                        scanner,
-                        "Nuova data e ora (YYYY-MM-DD HH:mm:ss): "
-                );
+			} else {
 
-        boolean modificata =
-                proiezioneservice.modificaDataProiezione(
-                        proiezioneSelezionata,
-                        nuovaDataOra
-                );
+				System.out.println("Eliminazione non consentita: proiezione già passata o con prenotazioni");
+			}
 
-        if (modificata) {
+		} else {
 
-            System.out.println("Proiezione modificata correttamente");
+			System.out.println("Eliminazione annullata");
+		}
+	}
 
-        } else {
+	/**
+	 * Modifica la data e l’ora di una proiezione se l’operazione è consentita.
+	 */
+	private void modificaDataProiezione() {
 
-            System.out.println(
-                    "Modifica non consentita: proiezione già passata, con prenotazioni o data occupata"
-            );
-        }
-    }
+		UICercaProiezioni uiCercaProiezioni = new UICercaProiezioni(proiezioneservice, scanner);
+
+		Proiezione proiezioneSelezionata = uiCercaProiezioni.RicercaProiezioni();
+
+		if (proiezioneSelezionata == null) {
+			return;
+		}
+
+		LocalDateTime nuovaDataOra = InputUtil.leggiDataOraObbligatoria(scanner,
+				"Nuova data e ora (YYYY-MM-DD HH:mm:ss): ");
+
+		boolean modificata = proiezioneservice.modificaDataProiezione(proiezioneSelezionata, nuovaDataOra);
+
+		if (modificata) {
+
+			System.out.println("Proiezione modificata correttamente");
+
+		} else {
+
+			System.out.println("Modifica non consentita: proiezione già passata, con prenotazioni o data occupata");
+		}
+	}
 }
