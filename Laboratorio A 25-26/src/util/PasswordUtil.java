@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package util;
 
 import java.security.MessageDigest;

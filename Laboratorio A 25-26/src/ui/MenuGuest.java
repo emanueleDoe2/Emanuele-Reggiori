@@ -1,9 +1,16 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package ui;
 
 import java.util.Scanner;
 
 import service.AuthService;
 import service.ProiezioneService;
+import util.InputUtil;
 
 public class MenuGuest {
 
@@ -26,9 +33,11 @@ public class MenuGuest {
 
             stampaMenuGuest();
 
-            System.out.print("Scelta: ");
-            scelta = scanner.nextInt();
-            scanner.nextLine();
+            scelta = InputUtil.leggiInteroObbligatorio(
+                    scanner,
+                    "Scelta: ",
+                    "Scelta non valida. Inserisci un numero."
+            );
 
             if (scelta == 1) {
           

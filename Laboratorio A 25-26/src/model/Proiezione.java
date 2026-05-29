@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package model;
 
 import java.time.LocalDateTime;
@@ -28,11 +34,6 @@ public class Proiezione {
 
     public double getCostoBiglietto() {
         return costoBiglietto;
-    }
-
-    public int getPostiDisponibili() {
-        return 0;
-    	//TODO
     }
     
 

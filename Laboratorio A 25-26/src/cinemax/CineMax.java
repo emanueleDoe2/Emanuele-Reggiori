@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package cinemax;
 
 import java.util.ArrayList;
@@ -15,24 +21,26 @@ import ui.MenuPrincipale;
 
 public class CineMax {
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
-        UserRepository utenteRepository = new UserRepository();
-        ArrayList<Utente> utenti = utenteRepository.caricaUtenti();
+		UserRepository utenteRepository = new UserRepository();
+		ArrayList<Utente> utenti = utenteRepository.caricaUtenti();
 
-        ProiezioniRepository proiezioneRepository = new ProiezioniRepository();
-        ArrayList<Proiezione> proiezioni = proiezioneRepository.caricaProiezioni();
+		ProiezioniRepository proiezioneRepository = new ProiezioniRepository();
+		ArrayList<Proiezione> proiezioni = proiezioneRepository.caricaProiezioni();
 
-        PrenotazioniRepository prenotazioneRepository = new PrenotazioniRepository();
-        ArrayList<Prenotazione> prenotazioni = prenotazioneRepository.caricaPrenotazioni();
-        
-        AuthService authService = new AuthService(utenti, utenteRepository);
-        ProiezioneService proiezioneService = new ProiezioneService(proiezioni, prenotazioni);
-        PrenotazioneService prenotazioneService = new PrenotazioneService(prenotazioni, prenotazioneRepository, proiezioneService);
+		PrenotazioniRepository prenotazioneRepository = new PrenotazioniRepository();
+		ArrayList<Prenotazione> prenotazioni = prenotazioneRepository.caricaPrenotazioni();
 
-        MenuPrincipale menu = new MenuPrincipale(utenti, proiezioni, prenotazioni, authService, proiezioneService, prenotazioneService);
-        menu.start();
+		AuthService authService = new AuthService(utenti, utenteRepository);
+		ProiezioneService proiezioneService = new ProiezioneService(proiezioni, prenotazioni, proiezioneRepository);
+		PrenotazioneService prenotazioneService = new PrenotazioneService(prenotazioni, prenotazioneRepository,
+				proiezioneService, utenti, authService);
 
-    }
+		MenuPrincipale menu = new MenuPrincipale(utenti, proiezioni, prenotazioni, authService, proiezioneService,
+				prenotazioneService);
+		menu.start();
+
+	}
 
 }

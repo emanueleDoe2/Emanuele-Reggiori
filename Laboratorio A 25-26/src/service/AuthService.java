@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package service;
 
 import java.util.ArrayList;
@@ -80,6 +86,18 @@ public class AuthService {
         utenteRepository.salvaUtente(nuovoUtente);
 
         return true;
+    }
+    
+    public Utente trovaUtentePerUsername(String username) {
+
+        for (Utente utente : utenti) {
+
+            if (utente.getUsername().equalsIgnoreCase(username)) {
+                return utente;
+            }
+        }
+
+        return null;
     }
 
 }

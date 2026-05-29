@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package repository;
 
 import java.io.File;
@@ -6,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import model.Ruolo;
 import model.Utente;
@@ -18,43 +25,99 @@ public class UserRepository {
 
         ArrayList<Utente> utenti = new ArrayList<Utente>();
 
+        File file = new File(percorsoFile);
+
+        if (!file.exists()) {
+            System.out.println("File utenti non trovato.");
+            return utenti;
+        }
+
         try {
 
-            File file = new File(percorsoFile);
             Scanner scanner = new Scanner(file);
 
             while (scanner.hasNextLine()) {
 
                 String riga = scanner.nextLine();
-                String[] campi = riga.split(",");
 
-                String nome = campi[0];
-                String cognome = campi[1];
-                String username = campi[2];
-                String password = campi[3];
-                //parsing data di nascita
-                LocalDate dataNascita = null;
+                if (!riga.isBlank()) {
 
-                String data = campi[4].trim();
+                    try {
 
-                if (!data.isEmpty() && !data.equalsIgnoreCase("null")) {
+                        String[] campi = riga.split(",");
 
-                    dataNascita = LocalDate.parse(data);
+                        if (campi.length < 7) {
+                            System.out.println("Riga utente incompleta, ignorata: " + riga);
+                            continue;
+                        }
+
+                        String nome = campi[0].trim();
+                        String cognome = campi[1].trim();
+                        String username = campi[2].trim();
+                        String password = campi[3].trim();
+
+                        LocalDate dataNascita = null;
+
+                        String data = campi[4].trim();
+
+                        if (!data.isEmpty() && !data.equalsIgnoreCase("null")) {
+                            dataNascita = LocalDate.parse(data);
+                        }
+
+                        String domicilio = campi[5].trim();
+
+                        Ruolo ruolo = Ruolo.valueOf(campi[6].trim().toUpperCase());
+
+                        if (nome.isBlank()) {
+                            System.out.println("Nome utente mancante, riga ignorata: " + riga);
+                            continue;
+                        }
+
+                        if (cognome.isBlank()) {
+                            System.out.println("Cognome utente mancante, riga ignorata: " + riga);
+                            continue;
+                        }
+
+                        if (username.isBlank()) {
+                            System.out.println("Username mancante, riga ignorata: " + riga);
+                            continue;
+                        }
+
+                        if (password.isBlank()) {
+                            System.out.println("Password mancante, riga ignorata: " + riga);
+                            continue;
+                        }
+
+                        if (domicilio.isBlank()) {
+                            System.out.println("Domicilio mancante, riga ignorata: " + riga);
+                            continue;
+                        }
+
+                        Utente utente = new Utente(
+                                nome,
+                                cognome,
+                                username,
+                                password,
+                                dataNascita,
+                                domicilio,
+                                ruolo
+                        );
+
+                        utenti.add(utente);
+
+                    } catch (DateTimeParseException e) {
+
+                        System.out.println("Data di nascita non valida, riga ignorata: " + riga);
+
+                    } catch (IllegalArgumentException e) {
+
+                        System.out.println("Ruolo non valido, riga ignorata: " + riga);
+
+                    } catch (ArrayIndexOutOfBoundsException e) {
+
+                        System.out.println("Campi mancanti nella riga utente, riga ignorata: " + riga);
+                    }
                 }
-                String domicilio = campi[5];
-                Ruolo ruolo = Ruolo.valueOf(campi[6]);
-
-                Utente utente = new Utente(
-                        nome,
-                        cognome,
-                        username,
-                        password,
-                        dataNascita,
-                        domicilio,
-                        ruolo
-                );
-
-                utenti.add(utente);
             }
 
             scanner.close();
@@ -62,7 +125,6 @@ public class UserRepository {
         } catch (IOException e) {
 
             System.out.println("Errore durante il caricamento degli utenti.");
-
         }
 
         return utenti;

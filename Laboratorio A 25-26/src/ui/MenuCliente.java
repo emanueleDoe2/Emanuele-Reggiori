@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package ui;
 
 import java.util.Scanner;
@@ -8,6 +14,7 @@ import model.Utente;
 import model.Prenotazione;
 import service.ProiezioneService;
 import service.PrenotazioneService;
+import util.InputUtil;
 
 public class MenuCliente {
 
@@ -28,180 +35,247 @@ public class MenuCliente {
 
 	public void start() {
 
-	    int scelta;
+		int scelta;
 
-	    do {
+		do {
 
-	        stampaMenuCliente();
+			stampaMenuCliente();
 
-	        System.out.print("Scelta: ");
-	        scelta = scanner.nextInt();
-	        scanner.nextLine();
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
 
-	        if (scelta == 1) {
+			if (scelta == 1) {
 
-	            cercaEPrenotaProiezione();
+				cercaEPrenotaProiezione();
 
-	        } else if (scelta == 2) {
+			} else if (scelta == 2) {
 
-	            gestisciPrenotazioniUtente();
+				gestisciPrenotazioniUtente();
 
-	        } else if (scelta == 0) {
+			} else if (scelta == 0) {
 
-	            System.out.println("Logout effettuato");
+				System.out.println("Logout effettuato");
 
-	        } else {
+			} else {
 
-	            System.out.println("Scelta non valida");
-	        }
+				System.out.println("Scelta non valida");
+			}
 
-	    } while (scelta != 0);
+		} while (scelta != 0);
 	}
-	
-	
+
 	private void cercaEPrenotaProiezione() {
 
-	    UICercaProiezioni uiCercaProiezioni =
-	            new UICercaProiezioni(proiezioneservice, scanner);
+		UICercaProiezioni uiCercaProiezioni = new UICercaProiezioni(proiezioneservice, scanner);
 
-	    Proiezione proiezioneSelezionata =
-	            uiCercaProiezioni.RicercaProiezioni();
+		Proiezione proiezioneSelezionata = uiCercaProiezioni.RicercaProiezioni();
 
-	    if (proiezioneSelezionata == null) {
-	        return;
-	    }
+		if (proiezioneSelezionata == null) {
+			return;
+		}
 
-	    int scelta;
+		int scelta;
 
-	    do {
+		do {
 
-	        System.out.println("==== PRENOTAZIONE ====");
-	        System.out.println("1. Crea una prenotazione per questa proiezione");
-	        System.out.println("0. Torna indietro");
-	        System.out.print("Scelta: ");
+			System.out.println("==== PRENOTAZIONE ====");
+			System.out.println("1. Crea una prenotazione per questa proiezione");
+			System.out.println("0. Torna indietro");
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
 
-	        scelta = scanner.nextInt();
-	        scanner.nextLine();
+			if (scelta == 1) {
 
-	        if (scelta == 1) {
+				creaPrenotazione(proiezioneSelezionata);
 
-	            creaPrenotazione(proiezioneSelezionata);
+			} else if (scelta == 0) {
 
-	        } else if (scelta == 0) {
+				System.out.println("Ritorno al menu cliente");
 
-	            System.out.println("Ritorno al menu cliente");
+			} else {
 
-	        } else {
+				System.out.println("Scelta non valida");
+			}
 
-	            System.out.println("Scelta non valida");
-	        }
-
-	    } while (scelta != 0 && scelta != 1);
+		} while (scelta != 0 && scelta != 1);
 	}
-	
+
 	private void creaPrenotazione(Proiezione proiezioneSelezionata) {
 
-	    int numeroPosti;
+		int numeroPosti;
 
-	    while (true) {
+		while (true) {
 
-	        System.out.print("Numero posti da prenotare: ");
+			numeroPosti = InputUtil.leggiInteroObbligatorio(scanner, "Numero posti da prenotare: ",
+					"Scelta non valida. Inserisci un numero.");
 
-	        numeroPosti = scanner.nextInt();
-	        scanner.nextLine();
+			if (numeroPosti <= 0) {
 
-	        if (numeroPosti <= 0) {
+				System.out.println("Il numero posti deve essere maggiore di 0");
 
-	            System.out.println("Il numero posti deve essere maggiore di 0");
+			} else {
 
-	        } else {
+				break;
+			}
+		}
 
-	            break;
-	        }
-	    }
+		boolean prenotazioneCreata = prenotazioneservice.creaPrenotazione(utente, proiezioneSelezionata, numeroPosti);
 
-	    boolean prenotazioneCreata =
-	            prenotazioneservice.creaPrenotazione(
-	                    utente,
-	                    proiezioneSelezionata,
-	                    numeroPosti
-	            );
+		if (prenotazioneCreata) {
 
-	    if (prenotazioneCreata) {
+			System.out.println("Prenotazione creata con successo");
 
-	        System.out.println("Prenotazione creata con successo");
+		} else {
 
-	    } else {
-
-	        System.out.println("Prenotazione fallita - posti insufficienti");
-	    }
+			System.out.println("Prenotazione fallita - posti insufficienti");
+		}
 	}
-	
-	
+
 	private void gestisciPrenotazioniUtente() {
 
-	    ArrayList<Prenotazione> prenotazioniUtente =
-	            prenotazioneservice.getPrenotazioniUtente(utente);
+		ArrayList<Prenotazione> prenotazioniUtente = prenotazioneservice.getPrenotazioniUtente(utente);
 
-	    if (prenotazioniUtente.isEmpty()) {
+		if (prenotazioniUtente.isEmpty()) {
 
-	        System.out.println("Non hai prenotazioni");
-	        return;
-	    }
+			System.out.println("Non hai prenotazioni");
+			return;
+		}
 
-	    stampaPrenotazioniUtente(prenotazioniUtente);
+		stampaPrenotazioniUtente(prenotazioniUtente);
 
-	    Prenotazione prenotazioneSelezionata =
-	            selezionaPrenotazione(prenotazioniUtente);
+		Prenotazione prenotazioneSelezionata = selezionaPrenotazione(prenotazioniUtente);
 
-	    if (prenotazioneSelezionata != null) {
+		if (prenotazioneSelezionata == null) {
+			return;
+		}
 
-	        visualizzaPrenotazione(prenotazioneSelezionata);
-	    }
+		visualizzaPrenotazione(prenotazioneSelezionata);
+
+		int scelta;
+
+		do {
+
+			System.out.println("===== GESTIONE PRENOTAZIONE =====");
+			System.out.println("1. Modifica prenotazione");
+			System.out.println("2. Cancella prenotazione");
+			System.out.println("0. Torna indietro");
+			scelta = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ", "Scelta non valida. Inserisci un numero.");
+
+			if (scelta == 1) {
+
+				ArrayList<Proiezione> alternative = prenotazioneservice
+						.getProiezioniAlternative(prenotazioneSelezionata);
+
+				if (alternative.isEmpty()) {
+
+					System.out.println("Non ci sono proiezioni alternative disponibili");
+
+				} else {
+
+					System.out.println("===== PROIEZIONI ALTERNATIVE =====");
+
+					for (int i = 0; i < alternative.size(); i++) {
+
+						Proiezione proiezione = alternative.get(i);
+
+						System.out.println((i + 1) + ". " + proiezione.getFilm().getTitolo() + " - "
+								+ proiezione.getDataOra() + " - " + proiezione.getCostoBiglietto() + "€");
+					}
+
+					while (true) {
+
+						int sceltaProiezione = InputUtil.leggiInteroObbligatorio(scanner,
+								"Seleziona nuova proiezione, oppure 0 per tornare indietro: ",
+								"Scelta non valida. Inserisci un numero.");
+
+						if (sceltaProiezione == 0) {
+							break;
+						}
+
+						if (sceltaProiezione >= 1 && sceltaProiezione <= alternative.size()) {
+
+							Proiezione nuovaProiezione = alternative.get(sceltaProiezione - 1);
+
+							boolean modificata = prenotazioneservice.modificaPrenotazione(prenotazioneSelezionata,
+									nuovaProiezione);
+
+							if (modificata) {
+
+								System.out.println("Prenotazione modificata correttamente");
+
+							} else {
+
+								System.out.println(
+										"Modifica non consentita: posti insufficienti o proiezione non valida");
+							}
+
+							break;
+
+						} else {
+
+							System.out.println("Scelta non valida");
+						}
+					}
+				}
+			} else if (scelta == 2) {
+
+				boolean eliminata = prenotazioneservice.eliminaPrenotazione(prenotazioneSelezionata);
+
+				if (eliminata) {
+
+					System.out.println("Prenotazione cancellata correttamente");
+
+				} else {
+
+					System.out.println(
+							"Cancellazione non consentita: la data di proiezione deve essere precedente la data odierna");
+				}
+
+			} else if (scelta == 0) {
+
+				System.out.println("Ritorno al menu cliente");
+
+			} else {
+
+				System.out.println("Scelta non valida");
+			}
+
+		} while (scelta != 0 && scelta != 2);
 	}
-	
+
 	private void stampaPrenotazioniUtente(ArrayList<Prenotazione> prenotazioniUtente) {
 
-	    System.out.println("===== LE TUE PRENOTAZIONI =====");
+		System.out.println("===== LE TUE PRENOTAZIONI =====");
 
-	    for (int i = 0; i < prenotazioniUtente.size(); i++) {
+		for (int i = 0; i < prenotazioniUtente.size(); i++) {
 
-	        Prenotazione prenotazione = prenotazioniUtente.get(i);
+			Prenotazione prenotazione = prenotazioniUtente.get(i);
 
-	        System.out.println(
-	                (i + 1) + ". "
-	                + prenotazione.getCodicePrenotazione()
-	                + " - "
-	                + prenotazione.getProiezione().getFilm().getTitolo()
-	                + " - "
-	                + prenotazione.getProiezione().getDataOra()
-	                + " - posti: "
-	                + prenotazione.getNumeroPostiPrenotati()
-	        );
-	    }
+			System.out.println((i + 1) + ". " + prenotazione.getCodicePrenotazione() + " - "
+					+ prenotazione.getProiezione().getFilm().getTitolo() + " - "
+					+ prenotazione.getProiezione().getDataOra() + " - posti: "
+					+ prenotazione.getNumeroPostiPrenotati());
+		}
 	}
-	
+
 	private Prenotazione selezionaPrenotazione(ArrayList<Prenotazione> prenotazioniUtente) {
 
-	    while (true) {
+		while (true) {
 
-	        System.out.print("Seleziona una prenotazione, oppure 0 per tornare indietro: ");
+			System.out.print("Seleziona una prenotazione, oppure 0 per tornare indietro: ");
 
-	        int sceltaPrenotazione = scanner.nextInt();
-	        scanner.nextLine();
+			int sceltaPrenotazione = InputUtil.leggiInteroObbligatorio(scanner, "Scelta: ",
+					"Scelta non valida. Inserisci un numero.");
 
-	        if (sceltaPrenotazione == 0) {
-	            return null;
-	        }
+			if (sceltaPrenotazione == 0) {
+				return null;
+			}
 
-	        if (sceltaPrenotazione >= 1
-	                && sceltaPrenotazione <= prenotazioniUtente.size()) {
+			if (sceltaPrenotazione >= 1 && sceltaPrenotazione <= prenotazioniUtente.size()) {
 
-	            return prenotazioniUtente.get(sceltaPrenotazione - 1);
-	        }
+				return prenotazioniUtente.get(sceltaPrenotazione - 1);
+			}
 
-	        System.out.println("Scelta non valida");
-	    }
+			System.out.println("Scelta non valida");
+		}
 	}
 
 	public void stampaMenuCliente() {

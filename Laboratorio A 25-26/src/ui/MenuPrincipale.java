@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package ui;
 
 import java.util.Scanner;
@@ -11,6 +17,7 @@ import model.Utente;
 import model.Prenotazione;
 import model.Proiezione;
 import model.Ruolo;
+import util.InputUtil;
 
 public class MenuPrincipale {
 
@@ -45,9 +52,11 @@ public class MenuPrincipale {
         do {
             stampaMenu();
 
-            System.out.print("Scelta: ");
-            scelta = scanner.nextInt();
-            scanner.nextLine();
+            scelta = InputUtil.leggiInteroObbligatorio(
+                    scanner,
+                    "Scelta: ",
+                    "Scelta non valida. Inserisci un numero."
+            );
 
             if (scelta == 1) {
                 login();
@@ -128,8 +137,8 @@ public class MenuPrincipale {
                         new MenuBigliettaio(
                                 scanner,
                                 utente,
-                                authservice,
-                                proiezioneservice
+                                prenotazioneservice,
+                                authservice
                         );
 
                 menuBigliettaio.start();

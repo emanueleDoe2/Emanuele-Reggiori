@@ -1,0 +1,7 @@
+Cognome: Reggiori
+Nome: Emanuele
+Matricola: 750948
+Sede: VA
+
+Nota:
+Il progetto è stato sviluppato individualmente, in quanto sono uno studente lavoratore full-time al terzo anno e non mi è stato possibile organizzare un gruppo di lavoro con altri studenti.

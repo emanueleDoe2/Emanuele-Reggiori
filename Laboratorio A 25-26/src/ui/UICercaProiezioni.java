@@ -1,3 +1,9 @@
+/**
+ * Autore: Reggiori Emanuele
+ * Matricola: 750948
+ * Sede: VA
+ */
+
 package ui;
 
 import java.util.Scanner;
@@ -38,7 +44,7 @@ public class UICercaProiezioni {
 
 		LocalDate dataDa = InputUtil.leggiDataFacoltativa(scanner, "Data da (YYYY-MM-DD): ");
 
-		LocalDate dataA = InputUtil.leggiDataFacoltativa(scanner, "Data da (YYYY-MM-DD): ");
+		LocalDate dataA = InputUtil.leggiDataFacoltativa(scanner, "Data a (YYYY-MM-DD): ");
 
 		Double costoMin = InputUtil.leggiDoubleFacoltativo(scanner, "Costo minimo: ");
 
@@ -68,8 +74,11 @@ public class UICercaProiezioni {
 
 			    System.out.print("Seleziona una proiezione da visualizzare, oppure 0 per tornare indietro: ");
 
-			    int scelta = scanner.nextInt();
-			    scanner.nextLine();
+			    int scelta = InputUtil.leggiInteroObbligatorio(
+			            scanner,
+			            "Scelta: ",
+			            "Scelta non valida. Inserisci un numero."
+			    );
 
 			    if (scelta == 0) {
 			        return null;

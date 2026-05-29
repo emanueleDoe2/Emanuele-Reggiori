@@ -1,0 +1,70 @@
+CineMax - Laboratorio Interdisciplinare A
+A.A. 2025/2026
+
+Progetto Java per la gestione di un piccolo cinema monosala.
+
+Il progetto è stato sviluppato e testato con Java 21.
+
+
+REQUISITI
+
+- JDK 21
+- Terminale oppure IDE Java, ad esempio Eclipse
+
+
+STRUTTURA DEL PROGETTO
+
+- src/
+  Codice sorgente Java.
+
+- bin/
+  File eseguibile:
+  cinemax.jar
+
+- data/
+  Directory utilizzata dall'applicazione per i file CSV.
+  Il file proiezioni.csv viene creato automaticamente dal programma se non presente.
+  Gli altri file CSV utilizzati sono:
+  utenti.csv
+  prenotazioni.csv
+
+- doc/
+  Manuale utente, manuale tecnico e Javadoc.
+
+- autori.txt
+  Dati degli autori.
+
+- README.txt
+  Istruzioni di esecuzione e compilazione.
+
+
+ESECUZIONE
+
+Aprire il terminale nella cartella radice del progetto ed eseguire:
+
+java -jar bin/cinemax.jar
+
+Esempio di cartella corretta:
+
+Laboratorio A 25-26/
+
+Il programma deve essere avviato dalla cartella radice perché utilizza la directory data/ tramite percorsi relativi.
+
+FUNZIONALITÀ PRINCIPALI
+
+L'applicazione consente di:
+
+- cercare e visualizzare proiezioni;
+- registrare nuovi clienti;
+- gestire prenotazioni dei clienti;
+- gestire il palinsesto delle proiezioni;
+- cercare e visualizzare prenotazioni per i bigliettai.
+
+
+NOTE
+
+Il main dell'applicazione si trova nella classe:
+
+cinemax.CineMax
+
+Il progetto non utilizza librerie esterne.
